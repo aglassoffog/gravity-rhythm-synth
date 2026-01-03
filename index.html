@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>物理エンジン x シンセサイザー</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h2>物理エンジン x シンセサイザー</h2>
+<div class="version">Version: v1.3.6</div>
+
+<div class="controls">
+  <div class="knob">
+    <label>POWER</label>
+    <button id="powerBtn">OFF</button>
+  </div>
+  <div class="knob">
+    <label>Waveform</label>
+    <select id="waveform">
+      <option>sine</option>
+      <option>square</option>
+      <option>sawtooth</option>
+      <option>triangle</option>
+    </select>
+  </div>
+  <div class="knob">
+    <label>Envelope</label>
+    <button id="envBtn">ON</button>
+  </div>
+  <div class="knob">
+    <label>Y Assign</label>
+    <select id="yAssign">
+      <option value="off">OFF</option>
+      <option value="pitch">Pitch</option>
+      <option value="vibrato">Vibrato</option>
+      <option value="env">Envelope</option>
+    </select>
+  </div>
+  <div class="knob">
+    <label>Gravity</label>
+    <input id="gravity" type="range" min="-2" max="2" step="0.01" value="0">
+    <div id="gravityVal">0</div>
+  </div>
+</div>
+
+<div class="coords">
+X:<span id="posX">0</span> | Y:<span id="posY">0</span>
+</div>
+
+<div class="canvas-container">
+  <canvas id="scope" width="400" height="150"></canvas>
+  <canvas id="fft" width="400" height="180"></canvas>
+</div>
+
+<div class="canvas-container">
+  <canvas id="world" width="400" height="400"></canvas>
+  <canvas id="xy" width="400" height="400"></canvas>
+</div>
+
+<p>A〜Hキー：発音＋キック</p>
+
+<script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
+<script src="script/draw.js"></script>
+<script src="script/main.js"></script>
+</body>
+</html>

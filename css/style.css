@@ -1,0 +1,8 @@
+body { background:#111; color:#eee; font-family:sans-serif; }
+.controls { display:flex; gap:16px; flex-wrap:wrap; margin-top:8px; }
+.knob { display:flex; flex-direction:column; font-size:12px; }
+.canvas-container { display:flex; gap:6px; margin-top:8px; }
+canvas { background:#000; border:1px solid #333; display:block; }
+button,select,input { width:140px; }
+.coords { font-family:monospace; color:#00ff88; margin-top:8px; }
+.version { color:#888; font-size:12px; margin-bottom:6px; }
