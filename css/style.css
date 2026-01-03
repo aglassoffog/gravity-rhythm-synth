@@ -24,3 +24,29 @@ button,select,input { width:140px; }
 .waveform-group input[type="radio"] {
   cursor: pointer;
 }
+
+.key-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.key-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #555;
+  background: #222;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.key-btn.active {
+  background: #044;
+  color: #0ff;
+}
+
+.key-btn.note-on {
+  background: #0a4;
+  color: #fff;
+  box-shadow: 0 0 8px #0f8;
+}

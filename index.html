@@ -11,14 +11,11 @@
 <div class="version">Version: v1.3.6</div>
 
 <div class="controls">
-  <div class="knob">
-    <label>POWER</label>
-    <button id="powerBtn">OFF</button>
-  </div>
+  <button id="startBtn">START</button>
+  <button id="kickBtn" disabled>KICK</button>
 </div>
 
 <div class="controls">
-  <div class="knob">
     <label>Waveform</label>
     <div class="waveform-group">
       <label>
@@ -38,7 +35,6 @@
         <input type="radio" name="waveform" value="triangle">
       </label>
     </div>
-  </div>
 </div>
 
 <div class="controls">
@@ -75,6 +71,13 @@
     <label>Gravity</label>
     <input id="gravity" type="range" min="-2" max="2" step="0.01" value="0">
     <div id="gravityVal">0</div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="knob">
+    <label>KEY SELECT</label>
+    <div id="keyButtons" class="key-buttons"></div>
   </div>
 </div>
 

@@ -4,7 +4,7 @@
 
 /* ---------- Global State ---------- */
 let audioCtx = null;
-let powerOn = false;
+let isRunning = false;
 let currentWaveform = "sine";
 
 /* ADSR Envelope Parameters */
@@ -19,7 +19,8 @@ const envParams = {
 const voices = new Map();
 
 /* ---------- DOM ---------- */
-const powerBtn = document.getElementById("powerBtn");
+const startBtn = document.getElementById("startBtn");
+const kickBtn  = document.getElementById("kickBtn");
 const yAssign  = document.getElementById("yAssign");
 
 /* ADSR sliders */
@@ -32,6 +33,67 @@ const release = document.getElementById("release");
 document.querySelectorAll("input[name='waveform']").forEach(r => {
   r.onchange = e => currentWaveform = e.target.value;
 });
+
+const KEY_LIST = [
+  { name: "C", key: "c", freq: 261.63 },
+  { name: "D", key: "d", freq: 293.66 },
+  { name: "E", key: "e", freq: 329.63 },
+  { name: "F", key: "f", freq: 349.23 },
+  { name: "G", key: "g", freq: 392.00 },
+  { name: "A", key: "a", freq: 440.00 },
+  { name: "B", key: "b", freq: 493.88 }
+];
+
+const keyButtonsEl = document.getElementById("keyButtons");
+
+const keyState = {};
+const noteState = {}; // note on/off
+
+KEY_LIST.forEach((k, i) => {
+  keyState[k.key] = i === 0; // Cのみtrue
+  noteState[k.key] = false;
+
+  const btn = document.createElement("button");
+  btn.textContent = k.name;
+  btn.className = "key-btn" + (keyState[k.key] ? " active" : "");
+  btn.dataset.key = k.key;
+
+  btn.onclick = () => {
+    keyState[k.key] = !keyState[k.key];
+    btn.classList.toggle("active", keyState[k.key]);
+  };
+
+  keyButtonsEl.appendChild(btn);
+});
+
+Matter.Events.on(engine, "collisionStart", event => {
+  if (!isRunning) return;
+
+  const activeKeys = KEY_LIST.filter(k => keyState[k.key]);
+  if (activeKeys.length === 0) return;
+
+  const picked = activeKeys[Math.floor(Math.random() * activeKeys.length)];
+  toggleNote(picked);
+});
+
+function toggleNote(k) {
+  if (noteState[k.key]) {
+    noteOff(k.key);
+    noteState[k.key] = false;
+    setNoteButtonState(k.key, false);
+  } else {
+    noteOn(k.key, k.freq);
+    noteState[k.key] = true;
+    setNoteButtonState(k.key, true);
+  }
+}
+
+function setNoteButtonState(key, on) {
+  const btn = document.querySelector(`.key-btn[data-key="${key}"]`);
+  if (!btn) return;
+  btn.classList.toggle("note-on", on);
+}
+
 
 /* ---------- Audio Nodes ---------- */
 let master, analyser, lfo, lfoGain;
@@ -70,15 +132,49 @@ async function initAudio() {
 
   await audioCtx.resume();
 
-  powerOn = true;
-  powerBtn.textContent = "ON";
-
   /* start loops */
   drawLoop();
   modLoop();
 }
 
-powerBtn.onclick = initAudio;
+startBtn.onclick = async () => {
+  if (!isRunning) {
+    // ===== START =====
+    await initAudio();
+
+    isRunning = true;
+    startBtn.textContent = "STOP";
+    kickBtn.disabled = false; 
+
+    randomKickBall();
+
+  } else {
+    // ===== STOP =====
+    isRunning = false;
+    startBtn.textContent = "START";
+    kickBtn.disabled = true;
+
+    allNotesOff();
+    stopBall();
+  }
+};
+
+kickBtn.onclick = () => {
+  if (!isRunning) return;
+  randomKickBall();
+};
+
+window.addEventListener("keydown", (e) => {
+  if (e.repeat) return;
+  // SPACEキー
+  if (e.code === "Space") {
+    e.preventDefault(); // ページスクロール防止
+
+    if (!isRunning) return;
+
+    randomKickBall();
+  }
+});
 
 /* ---------- Helpers ---------- */
 function yNorm() {
@@ -87,7 +183,7 @@ function yNorm() {
 
 /* ---------- Note Handling ---------- */
 function noteOn(key, freq) {
-  if (!powerOn || voices.has(key)) return;
+  if (!isRunning || voices.has(key)) return;
 
   const osc = audioCtx.createOscillator();
   osc.type = currentWaveform;
@@ -148,6 +244,10 @@ function noteOff(key) {
   voices.delete(key);
 }
 
+function allNotesOff() {
+  voices.forEach((_, key) => noteOff(key));
+}
+
 /* ---------- Modulation Loop ---------- */
 function modLoop() {
   if (!audioCtx) return;
@@ -176,30 +276,3 @@ function modLoop() {
 
   requestAnimationFrame(modLoop);
 }
-
-/* ---------- Keyboard ---------- */
-const keyMap = {
-  a: 261.63,
-  b: 293.66,
-  c: 329.63,
-  d: 349.23,
-  e: 392.0,
-  f: 440.0,
-  g: 493.88,
-  h: 523.25
-};
-
-window.addEventListener("keydown", e => {
-  if (e.repeat || !powerOn) return;
-
-  const k = e.key.toLowerCase();
-  if (!keyMap[k]) return;
-
-  kickBall();
-  noteOn(k, keyMap[k]);
-});
-
-window.addEventListener("keyup", e => {
-  if (!powerOn) return;
-  noteOff(e.key.toLowerCase());
-});

@@ -19,7 +19,11 @@ const ball = Bodies.circle(W/2,H/2,15,{
   restitution:1,
   friction:0,
   frictionStatic:0,
-  frictionAir:0
+  frictionAir:0,
+  inertia: Infinity,
+  render: {
+    fillStyle: "#00ff88"
+  }
 });
 
 World.add(engine.world, [
@@ -30,14 +34,22 @@ World.add(engine.world, [
   Bodies.rectangle(W+20,H/2,40,H,{isStatic:true})
 ]);
 
-function kickBall(){
-  Body.setVelocity(ball,{x:0,y:0});
-  Body.setAngularVelocity(ball,0);
-  const f = 0.012;
-  Body.applyForce(ball, ball.position,{
-    x:Math.cos(Math.PI/4)*f,
-    y:Math.sin(Math.PI/4)*f
+function randomKickBall() {
+  const angle = Math.random() * Math.PI * 2;
+  const force = 0.012;
+
+  Body.setVelocity(ball, { x: 0, y: 0 });
+  Body.setAngularVelocity(ball, 0);
+
+  Body.applyForce(ball, ball.position, {
+    x: Math.cos(angle) * force,
+    y: Math.sin(angle) * force
   });
+}
+
+function stopBall() {
+  Body.setVelocity(ball, { x: 0, y: 0 });
+  Body.setAngularVelocity(ball, 0);
 }
 
 // XY表示更新
