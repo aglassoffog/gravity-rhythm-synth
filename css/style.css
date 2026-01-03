@@ -1,11 +1,31 @@
 body { background:#111; color:#eee; font-family:sans-serif; }
-.controls { display:flex; gap:16px; flex-wrap:wrap; margin-top:8px; }
 .knob { display:flex; flex-direction:column; font-size:12px; }
 .canvas-container { display:flex; gap:6px; margin-top:8px; }
 canvas { background:#000; border:1px solid #333; display:block; }
-button,select,input { width:140px; }
+select,input { width:140px; }
 .coords { font-family:monospace; color:#00ff88; margin-top:8px; }
 .version { color:#888; font-size:12px; margin-bottom:6px; }
+
+.control-row {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 10px;
+}
+
+.row-label {
+  width: 110px;
+  padding-top: 4px;
+  font-size: 13px;
+  color: #0ff;
+  font-weight: bold;
+}
+
+.control-row .controls {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .waveform-group {
   display: flex;
   gap: 16px;
@@ -49,4 +69,19 @@ button,select,input { width:140px; }
   background: #0a4;
   color: #fff;
   box-shadow: 0 0 8px #0f8;
+}
+
+.start-btn {
+  width: 60;
+  height: 36px;
+  border: 1px solid #555;
+  background: #222;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.start-btn.active {
+  background: #044;
+  color: #0ff;
 }

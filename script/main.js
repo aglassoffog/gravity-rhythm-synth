@@ -20,7 +20,6 @@ const voices = new Map();
 
 /* ---------- DOM ---------- */
 const startBtn = document.getElementById("startBtn");
-const kickBtn  = document.getElementById("kickBtn");
 const yAssign  = document.getElementById("yAssign");
 
 /* ADSR sliders */
@@ -32,6 +31,16 @@ const release = document.getElementById("release");
 /* Waveform radios */
 document.querySelectorAll("input[name='waveform']").forEach(r => {
   r.onchange = e => currentWaveform = e.target.value;
+});
+
+const ballSizeSlider = document.getElementById("ballSize");
+const ballSizeVal = document.getElementById("ballSizeVal");
+
+ballSizeSlider.addEventListener("input", e => {
+  const size = Number(e.target.value);
+  ballSizeVal.textContent = size;
+
+  setBallRadius(size);
 });
 
 const KEY_LIST = [
@@ -59,6 +68,11 @@ KEY_LIST.forEach((k, i) => {
   btn.dataset.key = k.key;
 
   btn.onclick = () => {
+    if (noteState[k.key]) {
+      noteOff(k.key);
+      noteState[k.key] = false;
+      setNoteButtonState(k.key, false);
+    }
     keyState[k.key] = !keyState[k.key];
     btn.classList.toggle("active", keyState[k.key]);
   };
@@ -66,14 +80,33 @@ KEY_LIST.forEach((k, i) => {
   keyButtonsEl.appendChild(btn);
 });
 
-Matter.Events.on(engine, "collisionStart", event => {
-  if (!isRunning) return;
-
+function onSideWallHit(side) {
+  // 有効なKEYボタン一覧
   const activeKeys = KEY_LIST.filter(k => keyState[k.key]);
   if (activeKeys.length === 0) return;
 
+  // ランダムに1つ選ぶ
   const picked = activeKeys[Math.floor(Math.random() * activeKeys.length)];
   toggleNote(picked);
+}
+
+Matter.Events.on(engine, "collisionStart", event => {
+  if (!isRunning) return;
+
+  event.pairs.forEach(pair => {
+    const a = pair.bodyA;
+    const b = pair.bodyB;
+
+    // ボールと壁の組み合わせか？
+    if (!isBallWallCollision(a, b)) return;
+
+    const wall = a.label === "ball" ? b : a;
+
+    // 左右の壁だけ反応
+    if (wall.label === "wall-left" || wall.label === "wall-right") {
+      onSideWallHit(wall.label);
+    }
+  });
 });
 
 function toggleNote(k) {
@@ -135,6 +168,7 @@ async function initAudio() {
   /* start loops */
   drawLoop();
   modLoop();
+  xyLoop();
 }
 
 startBtn.onclick = async () => {
@@ -144,7 +178,7 @@ startBtn.onclick = async () => {
 
     isRunning = true;
     startBtn.textContent = "STOP";
-    kickBtn.disabled = false; 
+    startBtn.classList.toggle("active", true);
 
     randomKickBall();
 
@@ -152,26 +186,25 @@ startBtn.onclick = async () => {
     // ===== STOP =====
     isRunning = false;
     startBtn.textContent = "START";
-    kickBtn.disabled = true;
+    startBtn.classList.toggle("active", false);
+
+    document.querySelectorAll(".key-btn").forEach(btn => {
+      btn.classList.remove("note-on");
+    });
 
     allNotesOff();
     stopBall();
   }
 };
 
-kickBtn.onclick = () => {
-  if (!isRunning) return;
-  randomKickBall();
-};
-
 window.addEventListener("keydown", (e) => {
   if (e.repeat) return;
+
   // SPACEキー
   if (e.code === "Space") {
     e.preventDefault(); // ページスクロール防止
 
     if (!isRunning) return;
-
     randomKickBall();
   }
 });
