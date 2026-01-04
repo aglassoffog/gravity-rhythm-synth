@@ -36,13 +36,7 @@ function drawGrid(){
 }
 
 /* ======= XYリサージュ ======= */
-function drawXY(){
-  if(!analyser) return;
-  analyser.getByteTimeDomainData(xyData);
-
-  xyCtx.fillStyle = "rgba(0,0,0,0.25)";
-  xyCtx.fillRect(0,0,xy.width,xy.height);
-
+function drawXyGrid(){
   xyCtx.strokeStyle="#033"; xyCtx.lineWidth=1;
   for(let i=1;i<4;i++){
     const p=(xy.width/4)*i;
@@ -53,28 +47,19 @@ function drawXY(){
   xyCtx.strokeStyle="#055";
   xyCtx.beginPath(); xyCtx.moveTo(xy.width/2,0); xyCtx.lineTo(xy.width/2,xy.height); xyCtx.stroke();
   xyCtx.beginPath(); xyCtx.moveTo(0,xy.height/2); xyCtx.lineTo(xy.width,xy.height/2); xyCtx.stroke();
-
-  xyCtx.strokeStyle="#00ff88"; xyCtx.lineWidth=1.5; xyCtx.beginPath();
-  for(let i=0;i<xyData.length-xyOffset;i++){
-    const xVal=(xyData[i]-128)/128;
-    const yVal=(xyData[i+xyOffset]-128)/128;
-    const x=xy.width/2 + xVal*xy.width/2;
-    const y=xy.height/2 - yVal*xy.height/2;
-    i===0 ? xyCtx.moveTo(x,y) : xyCtx.lineTo(x,y);
-  }
-  xyCtx.stroke();
 }
 
 /* ======= メイン描画ループ ======= */
 function drawLoop(){
   requestAnimationFrame(drawLoop);
   if(!audioCtx) return;
+  if(!analyser) return;
 
   // Scope
   analyser.getFloatTimeDomainData(timeData);
   const start = findTriggerIndex(timeData);
   sctx.fillStyle="rgba(0,0,0,0.25)"; sctx.fillRect(0,0,scope.width,scope.height);
-  drawGrid();
+  // drawScopeGrid();
   sctx.strokeStyle="#0f0"; sctx.lineWidth=2; sctx.beginPath();
   for(let i=0;i<samplesToDraw;i++){
     const idx=(start+i)%timeData.length;
@@ -96,6 +81,23 @@ function drawLoop(){
   }
 
   // XY
-  drawXY();
+  analyser.getByteTimeDomainData(xyData);
+  // xyCtx.fillStyle = "rgba(0,0,0,0.25)";
+  // xyCtx.fillStyle = "rgba(0, 0, 0, 0.15)";
+  xyCtx.fillStyle = "rgba(0, 0, 0, 0.7)";
+  xyCtx.fillRect(0,0,xy.width,xy.height);
+  // drawXyGrid();
+  xyCtx.strokeStyle="#00ff88";
+  // xyCtx.lineWidth=1.5;
+  xyCtx.lineWidth = 2;
+  xyCtx.beginPath();
+  for(let i=0;i<xyData.length-xyOffset;i++){
+    const xVal=(xyData[i]-128)/128;
+    const yVal=(xyData[i+xyOffset]-128)/128;
+    const x=xy.width/2 + xVal*xy.width/2;
+    const y=xy.height/2 - yVal*xy.height/2;
+    i===0 ? xyCtx.moveTo(x,y) : xyCtx.lineTo(x,y);
+  }
+  xyCtx.stroke();
 }
 

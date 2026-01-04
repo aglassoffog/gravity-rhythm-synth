@@ -2,13 +2,12 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>物理エンジン x シンセサイザー</title>
+<title>Physics Synth</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h2>物理エンジン x シンセサイザー</h2>
-<div class="version">Version: v1.3.6</div>
+<h2>Physics Synth</h2>
 
 <div class="controls">
   <button id="startBtn" class="start-btn">START</button>
@@ -61,25 +60,15 @@
 </div>
 
 <div class="control-row">
-  <div class="row-label">Modulation</div>
+  <div class="row-label">Physics</div>
   <div class="controls">
-    <div class="knob">
-      <label>Y Assign</label>
-      <select id="yAssign">
-        <option value="off">OFF</option>
-        <option value="pitch">Pitch</option>
-        <option value="vibrato">Vibrato</option>
-        <option value="env">Envelope</option>
-      </select>
-    </div>
-
     <div class="knob">
       <label>Ball Size</label>
       <input
         type="range"
         id="ballSize"
         min="5"
-        max="120"
+        max="100"
         step="1"
         value="15"
       />
@@ -91,6 +80,17 @@
       <input id="gravity" type="range" min="-2" max="2" step="0.01" value="0">
       <div id="gravityVal">0</div>
     </div>
+
+    <div class="knob">
+      <label>Y Assign</label>
+      <select id="yAssign">
+        <option value="off">OFF</option>
+        <option value="pitch">Pitch</option>
+        <option value="vibrato">Vibrato</option>
+        <option value="env">Envelope</option>
+      </select>
+    </div>
+
   </div>
 </div>
 
@@ -112,11 +112,13 @@
   <canvas id="world" width="400" height="400"></canvas>
   <canvas id="xy" width="400" height="400"></canvas>
 </div>
+
 <div class="coords">
 X:<span id="posX">0</span> | Y:<span id="posY">0</span>
 </div>
 
-<p>SPACE KEY：KICK</p>
+<div class="operation">SPACE KEY：KICK</div>
+<div class="version">Version: v1.3.6</div>
 
 <script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
 <script src="script/physics.js"></script>

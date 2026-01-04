@@ -67,11 +67,30 @@ function createBall(x, y) {
     frictionAir: 0,
     inertia: Infinity,
     render: {
-      fillStyle: "#00ff88"
+      fillStyle: "#ffff66",
+      strokeStyle: "#fffde7",
+      lineWidth: 1
     },
     label: "ball"
   });
 }
+
+/*
+Matter.Events.on(engine, "afterRender", () => {
+  const ctx = render.context;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(ball.position.x, ball.position.y, ball.circleRadius, 0, Math.PI * 2);
+
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = "#ffff66"; // ネオン黄色
+  ctx.fillStyle = "#ffff66";
+
+  ctx.fill();
+  ctx.restore();
+});
+*/
 
 function setBallRadius(newRadius) {
   BALL_RADIUS = newRadius;

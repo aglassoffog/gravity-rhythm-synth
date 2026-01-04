@@ -1,9 +1,9 @@
 body { background:#111; color:#eee; font-family:sans-serif; }
+label { color:#0ff; }
+select { width:133px; background: #222; color: #aaa; font-size: 12px; }
+
 .knob { display:flex; flex-direction:column; font-size:12px; }
-.canvas-container { display:flex; gap:6px; margin-top:8px; }
-canvas { background:#000; border:1px solid #333; display:block; }
-select,input { width:140px; }
-.coords { font-family:monospace; color:#00ff88; margin-top:8px; }
+.coords { font-family:monospace; color:#0ff; margin-top:8px; }
 .version { color:#888; font-size:12px; margin-bottom:6px; }
 
 .control-row {
@@ -12,11 +12,18 @@ select,input { width:140px; }
   margin-top: 10px;
 }
 
+.operation {
+  padding-top: 4px;
+  font-size: 13px;
+  color: #eee;
+  font-weight: bold;
+}
+
 .row-label {
   width: 110px;
   padding-top: 4px;
   font-size: 13px;
-  color: #0ff;
+  color: #eee;
   font-weight: bold;
 }
 
@@ -85,3 +92,32 @@ select,input { width:140px; }
   background: #044;
   color: #0ff;
 }
+
+canvas { background:#000; border:1px solid #333; display:block; }
+
+.canvas-container { display:flex; gap:6px; margin-top:8px; }
+
+/*
+.physics-container {
+  position: relative;
+  width: 400px;
+  height: 400px;
+
+}
+
+#world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}
+
+#xy {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  opacity: 0.55;
+  pointer-events: none;
+}
+*/
