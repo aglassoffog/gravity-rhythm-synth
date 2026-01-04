@@ -116,9 +116,7 @@ function isWaveformStillPlaying(type) {
 }
 
 
-
-
-function onSideWallHit(side) {
+function triggerRandomNote() {
   // 有効なKEYボタン一覧
   const activeKeys = KEY_LIST.filter(k => keyState[k.key]);
   if (activeKeys.length === 0) return;
@@ -152,8 +150,13 @@ Matter.Events.on(engine, "collisionStart", event => {
 
     // 左右の壁だけ反応
     if (wall.label === "wall-left" || wall.label === "wall-right") {
-      onSideWallHit(wall.label);
+      triggerRandomNote();
+    } else if (wall.label === "wall-top" || wall.label === "wall-bottom") {
+      if (yAssign.value === "delay") {
+        boostDelayFeedback();
+      }
     }
+
   });
 });
 
@@ -161,11 +164,123 @@ Matter.Events.on(engine, "collisionStart", event => {
 /* ---------- Audio Nodes ---------- */
 let master, analyser, lfo, lfoGain;
 
-/* ---------- UI Bindings ---------- */
+/* ---------- Envelope ---------- */
 attack.oninput  = e => envParams.attack  = +e.target.value;
 decay.oninput   = e => envParams.decay   = +e.target.value;
 sustain.oninput = e => envParams.sustain = +e.target.value;
 release.oninput = e => envParams.release = +e.target.value;
+
+/* ---------- Delay ---------- */
+let delayNode, delayFeedback, delayMixer;
+let delayBoost = false;
+let baseDelayTime = 0.3;
+let baseDelayFeedback = 0.35;
+
+
+delayTime.oninput = e => {
+  if (!delayNode) return;
+  baseDelayTime = parseFloat(e.target.value);
+  if (yAssign.value !== "delay") {
+    delayNode.delayTime.setTargetAtTime(baseDelayTime, audioCtx.currentTime, 0.01);
+  }
+};
+
+delayFb.oninput = e => {
+  if (!delayFeedback) return;
+  baseDelayFeedback = parseFloat(e.target.value);
+  if (yAssign.value !== "delay") {
+    delayFeedback.gain.setTargetAtTime(baseDelayFeedback, audioCtx.currentTime, 0.01);
+  }
+};
+
+delayMix.oninput = e => {
+  if (!delayMixer) return;
+  delayMixer.gain.setTargetAtTime(+e.target.value, audioCtx.currentTime, 0.01);
+};
+
+function setupDelay() {
+  delayNode = audioCtx.createDelay(2.0);
+  delayNode.delayTime.value = baseDelayTime;
+
+  delayFeedback = audioCtx.createGain();
+  delayFeedback.gain.value = baseDelayFeedback;
+
+  delayMixer = audioCtx.createGain();
+  delayMixer.gain.value = 0.4;
+
+  // feedback loop
+  delayNode.connect(delayFeedback);
+  delayFeedback.connect(delayNode);
+
+  // wet → mix
+  delayNode.connect(delayMixer);
+  delayMixer.connect(master);
+}
+
+function boostDelayFeedback() {
+  if (!audioCtx || !delayFeedback) return;
+
+  const now = audioCtx.currentTime;
+
+  delayFeedback.gain.cancelScheduledValues(now);
+
+  delayFeedback.gain.setValueAtTime(0.0, now);
+  delayFeedback.gain.linearRampToValueAtTime(
+    Math.min(baseDelayFeedback + 0.3, 0.9),
+    now + 0.01
+  );
+  delayFeedback.gain.linearRampToValueAtTime(0.0, now + 0.12);
+  //delayFeedback.gain.exponentialRampToValueAtTime(
+  //  Math.max(base, 0.001),
+  //  now + 0.25
+  //);
+}
+
+/* ---------- Helpers ---------- */
+function yNorm() {
+  return Math.min(Math.max(ball.position.y / 400, 0), 1);
+}
+
+/* ---------- Modulation Loop ---------- */
+function modLoop() {
+  if (!audioCtx) return;
+
+  voices.forEach(v => {
+    const y = yNorm();
+
+    if (yAssign.value === "pitch") {
+      v.osc.frequency.setValueAtTime(
+        v.baseFreq * Math.pow(2, 0.5 - y),
+        audioCtx.currentTime
+      );
+      lfoGain.gain.value = 0;
+    }
+    else if (yAssign.value === "vibrato") {
+      lfoGain.gain.value = y * 20;
+    }
+    else if (yAssign.value === "env"){
+      v.osc.frequency.setValueAtTime(
+        v.baseFreq,
+        audioCtx.currentTime
+      );
+      lfoGain.gain.value = 0;
+    }
+    else if (yAssign.value === "delay"){
+      delayNode.delayTime.setTargetAtTime(
+        0.15,
+        audioCtx.currentTime,
+        0.05   // ← 超重要：スムージング
+      );
+      delayFeedback.gain.setTargetAtTime(
+        0.0,
+        audioCtx.currentTime,
+        0.25
+      )
+    }
+  });
+
+  requestAnimationFrame(modLoop);
+}
 
 /* ---------- Audio Init ---------- */
 async function initAudio() {
@@ -195,54 +310,14 @@ async function initAudio() {
 
   await audioCtx.resume();
 
+  setupDelay();
   /* start loops */
   drawLoop();
   modLoop();
   xyLoop();
+
 }
 
-startBtn.onclick = async () => {
-  if (!isRunning) {
-    // ===== START =====
-    await initAudio();
-
-    isRunning = true;
-    startBtn.textContent = "STOP";
-    startBtn.classList.toggle("active", true);
-
-    randomKickBall();
-
-  } else {
-    // ===== STOP =====
-    isRunning = false;
-    startBtn.textContent = "START";
-    startBtn.classList.toggle("active", false);
-
-    document.querySelectorAll(".key-btn").forEach(btn => {
-      btn.classList.remove("note-on");
-    });
-
-    allNotesOff();
-    stopBall();
-  }
-};
-
-window.addEventListener("keydown", (e) => {
-  if (e.repeat) return;
-
-  // SPACEキー
-  if (e.code === "Space") {
-    e.preventDefault(); // ページスクロール防止
-
-    if (!isRunning) return;
-    randomKickBall();
-  }
-});
-
-/* ---------- Helpers ---------- */
-function yNorm() {
-  return Math.min(Math.max(ball.position.y / 400, 0), 1);
-}
 
 /* ---------- Note Handling ---------- */
 function noteOn(key, freq, waveform) {
@@ -257,6 +332,7 @@ function noteOn(key, freq, waveform) {
 
   osc.connect(gain);
   gain.connect(master);
+  gain.connect(delayNode);
   lfoGain.connect(osc.frequency);
 
   osc.start();
@@ -321,33 +397,56 @@ function noteOff(key) {
 
 function allNotesOff() {
   voices.forEach((_, key) => noteOff(key));
+
+  if (delayFeedback) delayFeedback.gain.value = 0;
 }
 
-/* ---------- Modulation Loop ---------- */
-function modLoop() {
+yAssign.onchange = () => {
   if (!audioCtx) return;
 
-  voices.forEach(v => {
-    const y = yNorm();
+  if (yAssign.value !== "delay") {
+    const now = audioCtx.currentTime;
 
-    if (yAssign.value === "pitch") {
-      v.osc.frequency.setValueAtTime(
-        v.baseFreq * Math.pow(2, 0.5 - y),
-        audioCtx.currentTime
-      );
-      lfoGain.gain.value = 0;
-    }
-    else if (yAssign.value === "vibrato") {
-      lfoGain.gain.value = y * 20;
-    }
-    else {
-      v.osc.frequency.setValueAtTime(
-        v.baseFreq,
-        audioCtx.currentTime
-      );
-      lfoGain.gain.value = 0;
-    }
-  });
+    delayNode.delayTime.cancelScheduledValues(now);
+    delayFeedback.gain.cancelScheduledValues(now);
+    
+    delayNode.delayTime.setTargetAtTime(baseDelayTime, now, 0.01);
+    delayFeedback.gain.setTargetAtTime(baseDelayFeedback, now, 0.01);
+  }
+};
 
-  requestAnimationFrame(modLoop);
-}
+startBtn.onclick = async () => {
+  if (!isRunning) {
+    // ===== START =====
+    await initAudio();
+
+    isRunning = true;
+    startBtn.textContent = "STOP";
+    startBtn.classList.toggle("active", true);
+
+    randomKickBall();
+
+  } else {
+    // ===== STOP =====
+    isRunning = false;
+    startBtn.textContent = "START";
+    startBtn.classList.toggle("active", false);
+
+    allNotesOff();
+    stopBall();
+  }
+};
+
+window.addEventListener("keydown", (e) => {
+  if (e.repeat) return;
+
+  // SPACEキー
+  if (e.code === "Space") {
+    e.preventDefault(); // ページスクロール防止
+
+    if (!isRunning) return;
+    randomKickBall();
+  }
+});
+
+

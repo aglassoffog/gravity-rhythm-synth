@@ -2,12 +2,12 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>Physics Modulation Synth</title>
+<title>Gravity Rhythm Synth</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h2>Physics Modulation Synth</h2>
+<h2>Gravity Rhythm Synth</h2>
 
 <div class="controls">
   <button id="startBtn" class="start-btn">START</button>
@@ -19,8 +19,8 @@
       <div class="waveform-buttons">
         <button class="waveform-btn active" data-waveform="sine">Sine</button>
         <button class="waveform-btn" data-waveform="square">Square</button>
-        <button class="waveform-btn" data-waveform="saw">Saw</button>
-        <button class="waveform-btn" data-waveform="triangle">Tri</button>
+        <button class="waveform-btn" data-waveform="sawtooth">Saw</button>
+        <button class="waveform-btn" data-waveform="triangle">Triangle</button>
       </div>
     </div>
   </div>
@@ -44,6 +44,25 @@
     <div class="knob">
       <label>Release</label>
       <input id="release" type="range" min="0.001" max="2" step="0.001" value="0.2">
+    </div>
+  </div>
+</div>
+
+<div class="control-row">
+  <div class="row-label">Delay</div>
+    <div class="controls">
+      <div class="knob">
+        <label>Time</label>
+        <input id="delayTime" type="range" min="0" max="1.5" step="0.01" value="0.3">
+      </div>
+      <div class="knob">
+        <label>Feedback</label>
+        <input id="delayFb" type="range" min="0" max="0.85" step="0.01" value="0.35">
+      </div>
+      <div class="knob">
+        <label>Mix</label>
+        <input id="delayMix" type="range" min="0" max="1" step="0.01" value="0.4">
+      </div>
     </div>
   </div>
 </div>
@@ -77,6 +96,7 @@
         <option value="pitch">Pitch</option>
         <option value="vibrato">Vibrato</option>
         <option value="env">Envelope</option>
+        <option value="delay">Delay</option>
       </select>
     </div>
 
