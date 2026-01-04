@@ -151,6 +151,8 @@ Matter.Events.on(engine, "collisionStart", event => {
     // 左右の壁だけ反応
     if (wall.label === "wall-left" || wall.label === "wall-right") {
       triggerRandomNote();
+      // console.log('time', delayNode.delayTime.value);
+      // console.log('feedback', delayFeedback.gain.value);
     } else if (wall.label === "wall-top" || wall.label === "wall-bottom") {
       if (yAssign.value === "delay") {
         boostDelayFeedback();
@@ -182,8 +184,6 @@ delayTime.oninput = e => {
   baseDelayTime = parseFloat(e.target.value);
   if (yAssign.value !== "delay") {
     delayNode.delayTime.setTargetAtTime(baseDelayTime, audioCtx.currentTime, 0.01);
-  } else {
-    delayNode.delayTime.setTargetAtTime(0.15, audioCtx.currentTime, 0.05); // ← 超重要：スムージング
   }
 };
 
@@ -192,8 +192,6 @@ delayFb.oninput = e => {
   baseDelayFeedback = parseFloat(e.target.value);
   if (yAssign.value !== "delay") {
     delayFeedback.gain.setTargetAtTime(baseDelayFeedback, audioCtx.currentTime, 0.01);
-  } else {
-    delayFeedback.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.01 );
   }
 };
 
@@ -396,12 +394,15 @@ function allNotesOff() {
 yAssign.onchange = () => {
   if (!audioCtx) return;
 
-  if (yAssign.value !== "delay") {
-    const now = audioCtx.currentTime;
+  const now = audioCtx.currentTime;
 
-    delayNode.delayTime.cancelScheduledValues(now);
-    delayFeedback.gain.cancelScheduledValues(now);
-    
+  delayNode.delayTime.cancelScheduledValues(now);
+  delayFeedback.gain.cancelScheduledValues(now);
+
+  if (yAssign.value === "delay") {
+    delayNode.delayTime.setTargetAtTime(0.15, now, 0.05); // ← 超重要：スムージング
+    delayFeedback.gain.setTargetAtTime(0.0, now, 0.01 );
+  } else {
     delayNode.delayTime.setTargetAtTime(baseDelayTime, now, 0.01);
     delayFeedback.gain.setTargetAtTime(baseDelayFeedback, now, 0.01);
   }
