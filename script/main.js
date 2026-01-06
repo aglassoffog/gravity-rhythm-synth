@@ -216,7 +216,7 @@ function setupDelay() {
 }
 
 function boostDelayFeedback() {
-  if (!audioCtx || !delayFeedback) return;
+  if (!audioCtx || !delayMixer) return;
 
   const now = audioCtx.currentTime;
 
@@ -234,34 +234,49 @@ function yNorm() {
 function modLoop() {
   if (!audioCtx) return;
 
-  voices.forEach(v => {
-    const y = yNorm();
+  const y = yNorm();
 
-    if (yAssign.value === "pitch") {
-      v.osc.frequency.setValueAtTime(
-        v.baseFreq * Math.pow(2, 0.5 - y),
-        audioCtx.currentTime
-      );
-      lfoGain.gain.value = 0;
-    }
-    else if (yAssign.value === "vibrato") {
-      v.osc.frequency.setValueAtTime(
-        v.baseFreq,
-        audioCtx.currentTime
-      );
-      lfoGain.gain.value = y * 20;
-    }
-    else {
-      v.osc.frequency.setValueAtTime(
-        v.baseFreq,
-        audioCtx.currentTime
-      );
-      lfoGain.gain.value = 0;
-    }
-  });
+  if (yAssign.value === "pitch") {
+    voices.forEach(v => {
+        v.osc.frequency.setValueAtTime(
+          v.baseFreq * Math.pow(2, 0.5 - y),
+          audioCtx.currentTime
+        );
+    });
+  }
+  else if (yAssign.value === "vibrato") {
+    lfoGain.gain.value = y * 20;
+  }
 
   requestAnimationFrame(modLoop);
 }
+
+yAssign.onchange = () => {
+  if (!audioCtx) return;
+
+  const now = audioCtx.currentTime;
+
+  if (yAssign.value !== "pitch") {
+    voices.forEach(v => {
+      v.osc.frequency.setValueAtTime(
+        v.baseFreq,
+        now
+      );
+    });
+  }
+
+  if (yAssign.value !== "vibrato") {
+      lfoGain.gain.value = 0;
+  }
+
+  if (yAssign.value === "delay") {
+    delayMixer.gain.cancelScheduledValues(now);
+    delayMixer.gain.setValueAtTime(0.0, now);
+  } else {
+    delayMixer.gain.cancelScheduledValues(now);
+    delayMixer.gain.setValueAtTime(baseDelayMix, now);
+  }
+};
 
 /* ---------- Audio Init ---------- */
 async function initAudio() {
@@ -381,18 +396,6 @@ function allNotesOff() {
   if (delayFeedback) delayFeedback.gain.value = 0;
 }
 
-yAssign.onchange = () => {
-  if (!audioCtx) return;
-
-  const now = audioCtx.currentTime;
-  delayMixer.gain.cancelScheduledValues(now);
-
-  if (yAssign.value === "delay") {
-    delayMixer.gain.setValueAtTime(0.0, now);
-  } else {
-    delayMixer.gain.setValueAtTime(baseDelayMix, now);
-  }
-};
 
 startBtn.onclick = async () => {
   if (!isRunning) {
@@ -427,5 +430,3 @@ window.addEventListener("keydown", (e) => {
     randomKickBall();
   }
 });
-
-
