@@ -245,9 +245,13 @@ function modLoop() {
       lfoGain.gain.value = 0;
     }
     else if (yAssign.value === "vibrato") {
+      v.osc.frequency.setValueAtTime(
+        v.baseFreq,
+        audioCtx.currentTime
+      );
       lfoGain.gain.value = y * 20;
     }
-    else if (yAssign.value === "env"){
+    else {
       v.osc.frequency.setValueAtTime(
         v.baseFreq,
         audioCtx.currentTime
