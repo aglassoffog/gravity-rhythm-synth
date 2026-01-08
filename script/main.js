@@ -392,8 +392,6 @@ function noteOff(key) {
 
 function allNotesOff() {
   voices.forEach((_, key) => noteOff(key));
-
-  if (delayFeedback) delayFeedback.gain.value = 0;
 }
 
 
@@ -406,6 +404,8 @@ startBtn.onclick = async () => {
     startBtn.textContent = "STOP";
     startBtn.classList.toggle("active", true);
 
+    if (delayFeedback) delayFeedback.gain.value = baseDelayFeedback;
+
     randomKickBall();
 
   } else {
@@ -416,6 +416,7 @@ startBtn.onclick = async () => {
 
     allNotesOff();
     stopBall();
+    if (delayFeedback) delayFeedback.gain.value = 0;
   }
 };
 

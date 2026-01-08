@@ -1,5 +1,5 @@
 const { Engine, Render, World, Bodies, Body, Runner } = Matter;
-const W = 400, H = 400;
+const W = 600, H = 400;
 const BALL_SPEED = 5;
 let BALL_RADIUS = 15;
 
@@ -11,7 +11,7 @@ const worldCanvas = document.getElementById("world");
 Render.run(Render.create({
   canvas: worldCanvas,
   engine,
-  options:{ width:W, height:H, wireframes:false, background:"#000" }
+  options:{ width:W, height:H, wireframes:false, background:"transparent" }
 }));
 
 const runner = Runner.create();
