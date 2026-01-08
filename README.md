@@ -60,4 +60,4 @@ Free to use, modify, and redistribute.
 
 ## Author
 
-Created by **aglassoffog**  
+Created by **[aglassoffog](https://www.youtube.com/@aglassoffog)**
