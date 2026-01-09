@@ -10,6 +10,8 @@ unrepeatable musical experience.
 This instrument does not play pre-written patterns —  
 it *emerges* from motion.
 
+![](./demo.gif)
+
 ---
 
 ## Features
