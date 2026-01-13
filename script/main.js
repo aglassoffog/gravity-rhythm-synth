@@ -179,7 +179,7 @@ filterType.onchange = e => {
 
 filterFreq.oninput = e => {
   if (!filter) return;
-  baseFilterFreq = +e.target.value;
+  baseFilterFreq = Number(e.target.value);
   filter.frequency.setTargetAtTime(baseFilterFreq, audioCtx.currentTime, 0.01);
 };
 
@@ -288,7 +288,7 @@ function modLoop() {
     lfoGain.gain.value = y * 20;
   }
   else if (yAssign.value === "filter") {
-    const cutoff = 300 + (1 - y) * 8000;
+    const cutoff = 200 + (1 - y) * 12000;
     filter.frequency.setTargetAtTime(cutoff, now, 0.02);
   }
   requestAnimationFrame(modLoop);

@@ -17,7 +17,7 @@ Render.run(Render.create({
 const runner = Runner.create();
 Runner.run(runner, engine);
 
-let ball = createBall(W / 2, H / 2);
+let ball = createBall(W/2, H/2, 15);
 
 const wallLeft = Bodies.rectangle(
   -20, H / 2, 40, H,
@@ -59,8 +59,8 @@ function randomKickBall() {
   });
 }
 
-function createBall(x, y) {
-  return Bodies.circle(x, y, BALL_RADIUS, {
+function createBall(x, y, r) {
+  return Bodies.circle(x, y, r, {
     restitution: 1,
     friction: 0,
     frictionStatic: 0,
@@ -75,31 +75,12 @@ function createBall(x, y) {
   });
 }
 
-/*
-Matter.Events.on(engine, "afterRender", () => {
-  const ctx = render.context;
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(ball.position.x, ball.position.y, ball.circleRadius, 0, Math.PI * 2);
-
-  ctx.shadowBlur = 20;
-  ctx.shadowColor = "#ffff66"; // ネオン黄色
-  ctx.fillStyle = "#ffff66";
-
-  ctx.fill();
-  ctx.restore();
-});
-*/
-
 function setBallRadius(newRadius) {
-  BALL_RADIUS = newRadius;
-
   const { x, y } = ball.position;
   const v = ball.velocity;
 
   World.remove(engine.world, ball);
-  ball = createBall(x, y);
+  ball = createBall(x, y, newRadius);
   World.add(engine.world, ball);
 
   Body.setVelocity(ball, {
