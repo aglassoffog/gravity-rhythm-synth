@@ -27,37 +27,6 @@ function findTriggerIndex(data){
   return 0;
 }
 
-
-/* ======= Scope ======= */
-function drawGrid(){
-  sctx.strokeStyle="#033"; sctx.lineWidth=1;
-  const divX=10, divY=4;
-  for(let i=1;i<divX;i++){
-    const x=(scope.width/divX)*i;
-    sctx.beginPath(); sctx.moveTo(x,0); sctx.lineTo(x,scope.height); sctx.stroke();
-  }
-  for(let i=1;i<divY;i++){
-    const y=(scope.height/divY)*i;
-    sctx.beginPath(); sctx.moveTo(0,y); sctx.lineTo(scope.width,y); sctx.stroke();
-  }
-  sctx.strokeStyle="#055";
-  sctx.beginPath(); sctx.moveTo(0,scope.height/2); sctx.lineTo(scope.width,scope.height/2); sctx.stroke();
-}
-
-/* ======= XYリサージュ ======= */
-function drawXyGrid(){
-  xyCtx.strokeStyle="#033"; xyCtx.lineWidth=1;
-  for(let i=1;i<4;i++){
-    const p=(xy.width/4)*i;
-    xyCtx.beginPath(); xyCtx.moveTo(p,0); xyCtx.lineTo(p,xy.height); xyCtx.stroke();
-    xyCtx.beginPath(); xyCtx.moveTo(0,p); xyCtx.lineTo(xy.width,p); xyCtx.stroke();
-  }
-
-  xyCtx.strokeStyle="#055";
-  xyCtx.beginPath(); xyCtx.moveTo(xy.width/2,0); xyCtx.lineTo(xy.width/2,xy.height); xyCtx.stroke();
-  xyCtx.beginPath(); xyCtx.moveTo(0,xy.height/2); xyCtx.lineTo(xy.width,xy.height/2); xyCtx.stroke();
-}
-
 /* ======= メイン描画ループ ======= */
 function drawLoop(){
   requestAnimationFrame(drawLoop);
@@ -83,14 +52,14 @@ function drawLoop(){
   }
 
   // FFT
-  const fftHeight = fft.height - 220;
+  const fftHeight = fft.height;
   analyser.getByteFrequencyData(freqData);
   fctx.clearRect(0,0,fft.width,fft.height);
   const barWidth = fft.width / freqData.length;
   for(let i=0;i<freqData.length;i++){
     const h=(freqData[i]/255)*(fftHeight-10);
     fctx.fillStyle="#08f";
-    fctx.fillRect(i*barWidth, fftHeight-h-10 + 220, barWidth,h);
+    fctx.fillRect(i*barWidth, fftHeight-h-10, barWidth,h);
   }
 
   // XY

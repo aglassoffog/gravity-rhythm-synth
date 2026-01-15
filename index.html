@@ -9,13 +9,16 @@
 
 <h2>Gravity Rhythm Synth 🌙</h2>
 
-<div class="controls">
-  <button id="startBtn" class="start-btn">START</button>
-</div>
+<div class="container">
+<div class="control-container">
 
-<div class="control-row">
-  <div class="row-label">Waveform</div>
   <div class="controls">
+    <button id="startBtn" class="start-btn">START</button>
+  </div>
+
+  <div class="control-row">
+    <div class="row-label">Waveform</div>
+    <div class="controls">
       <div class="waveform-buttons">
         <button class="waveform-btn active" data-waveform="sine">Sine</button>
         <button class="waveform-btn" data-waveform="square">Square</button>
@@ -24,129 +27,127 @@
       </div>
     </div>
   </div>
-</div>
 
-<div class="control-row">
-  <div class="row-label">Envelope</div>
-  <div class="controls">
-    <div class="knob">
-      <label>Attack</label>
-      <input id="attack" type="range" min="0.001" max="1" step="0.001" value="0.01">
-    </div>
-    <div class="knob">
-      <label>Decay</label>
-      <input id="decay" type="range" min="0.001" max="1" step="0.001" value="0.1">
-    </div>
-    <div class="knob">
-      <label>Sustain</label>
-      <input id="sustain" type="range" min="0" max="1" step="0.01" value="0.7">
-    </div>
-    <div class="knob">
-      <label>Release</label>
-      <input id="release" type="range" min="0.001" max="2" step="0.001" value="0.2">
-    </div>
-  </div>
-</div>
-
-<div class="control-row">
-  <div class="row-label">Filter</div>
-  <div class="controls">
-    <div class="knob">
-      <label>Type</label>
-      <select id="filterType">
-        <option value="off">OFF</option>
-        <option value="lowpass" selected>LPF</option>
-        <option value="highpass">HPF</option>
-        <option value="bandpass">BPF</option>
-      </select>
-    </div>
-    <div class="knob">
-      <label>Freq</label>
-      <input id="filterFreq" type="range" min="100" max="12000" value="6000">
-    </div>
-    <div class="knob">
-      <label>Q</label>
-      <input id="filterQ" type="range" min="0.1" max="20" step="0.1" value="0.7">
-    </div>
-  </div>
-</div>
-
-<div class="control-row">
-  <div class="row-label">Delay</div>
+  <div class="control-row">
+    <div class="row-label">Envelope</div>
     <div class="controls">
       <div class="knob">
+        <input class="fader" id="attack" type="range" min="0.001" max="1" step="0.001" value="0.01">
+        <label>Attack</label>
+      </div>
+      <div class="knob">
+        <input class="fader" id="decay" type="range" min="0.001" max="1" step="0.001" value="0.1">
+        <label>Decay</label>
+      </div>
+      <div class="knob">
+        <input class="fader" id="sustain" type="range" min="0" max="1" step="0.01" value="0.7">
+        <label>Sustain</label>
+      </div>
+      <div class="knob">
+        <input class="fader" id="release" type="range" min="0.001" max="2" step="0.001" value="0.2">
+        <label>Release</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="control-row">
+    <div class="row-label">Filter</div>
+    <div class="controls">
+      <div class="knob">
+        <div class="select-container">
+          <select id="filterType">
+            <option value="off">OFF</option>
+            <option value="lowpass" selected>LPF</option>
+            <option value="highpass">HPF</option>
+            <option value="bandpass">BPF</option>
+          </select>
+        </div>
+        <label>Type</label>
+      </div>
+      <div class="knob">
+        <input class="fader" id="filterFreq" type="range" min="100" max="12000" value="6000">
+        <label>Freq</label>
+      </div>
+      <div class="knob">
+        <input class="fader" id="filterQ" type="range" min="0.1" max="20" step="0.1" value="0.7">
+        <label>Q</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="control-row">
+    <div class="row-label">Delay</div>
+    <div class="controls">
+      <div class="knob">
+        <input class="fader" id="delayTime" type="range" min="0" max="1.5" step="0.01" value="0.3">
         <label>Time</label>
-        <input id="delayTime" type="range" min="0" max="1.5" step="0.01" value="0.3">
       </div>
       <div class="knob">
+        <input class="fader" id="delayFb" type="range" min="0" max="0.85" step="0.01" value="0.35">
         <label>Feedback</label>
-        <input id="delayFb" type="range" min="0" max="0.85" step="0.01" value="0.35">
       </div>
       <div class="knob">
+        <input class="fader" id="delayMix" type="range" min="0" max="1" step="0.01" value="0.4">
         <label>Mix</label>
-        <input id="delayMix" type="range" min="0" max="1" step="0.01" value="0.4">
       </div>
     </div>
   </div>
-</div>
 
-<div class="control-row">
-  <div class="row-label">Physics</div>
-  <div class="controls">
-    <div class="knob">
-      <label>Ball Size</label>
-      <input
-        type="range"
-        id="ballSize"
-        min="5"
-        max="100"
-        step="1"
-        value="15"
-      />
-      <span id="ballSizeVal">15</span>
-    </div>
+  <div class="control-row">
+    <div class="row-label">Physics</div>
+    <div class="controls">
+      <div class="knob">
+        <input class="fader" id="ballSize" type="range" min="5" max="50" step="1" value="13">
+        <label>Ball Size</label>
+        <span class="disp-val1" id="ballSizeVal">13</span>
+      </div>
 
-    <div class="knob">
-      <label>Gravity</label>
-      <input id="gravity" type="range" min="-2" max="2" step="0.01" value="0">
-      <div id="gravityVal">0</div>
-    </div>
+      <div class="knob">
+        <input class="fader" id="gravity" type="range" min="-0.5" max="0.5" step="0.01" value="0">
+        <label>Gravity</label>
+        <div class="disp-val2" id="gravityVal">0</div>
+      </div>
 
-    <div class="knob">
-      <label>Y Assign</label>
-      <select id="yAssign">
-        <option value="off">OFF</option>
-        <option value="pitch">Pitch</option>
-        <option value="vibrato">Vibrato</option>
-        <option value="env">Envelope</option>
-        <option value="filter">Filter</option>
-        <option value="delay">Delay</option>
-      </select>
-    </div>
+      <div class="knob">
+        <div class="select-container">
+          <select id="yAssign">
+            <option value="off">OFF</option>
+            <option value="pitch">Pitch</option>
+            <option value="vibrato">Vibrato</option>
+            <option value="env">Envelope</option>
+            <option value="filter">Filter</option>
+            <option value="delay">Delay</option>
+          </select>
+        </div>
+        <label>Y Assign</label>
+      </div>
 
-  </div>
-</div>
-
-<div class="control-row">
-  <div class="row-label">Keys</div>
-  <div class="controls">
-    <div id="keyButtons" class="key-buttons">
-      <button class="key-btn active" data-key="c">C</button>
-      <button class="key-btn" data-key="d">D</button>
-      <button class="key-btn" data-key="e">E</button>
-      <button class="key-btn" data-key="f">F</button>
-      <button class="key-btn" data-key="g">G</button>
-      <button class="key-btn" data-key="a">A</button>
-      <button class="key-btn" data-key="b">B</button>
     </div>
   </div>
+
+  <div class="control-row">
+    <div class="row-label">Keys</div>
+    <div class="controls">
+      <div id="keyButtons" class="key-buttons">
+        <button class="key-btn active" data-key="c">C</button>
+        <button class="key-btn" data-key="d">D</button>
+        <button class="key-btn" data-key="e">E</button>
+        <button class="key-btn" data-key="f">F</button>
+        <button class="key-btn" data-key="g">G</button>
+        <button class="key-btn" data-key="a">A</button>
+        <button class="key-btn" data-key="b">B</button>
+      </div>
+    </div>
+  </div>
+
+</div>
 </div>
 
 <div class="canvas-container">
-  <canvas id="fft" class="canvasA" width="600" height="400"></canvas>
-  <canvas id="xy" class="canvasB" width="280" height="280"></canvas>
-  <canvas id="scope" class="canvasB" width="180" height="180"></canvas>
-  <canvas id="world" class="canvasB" width="600" height="400"></canvas>
+  <canvas id="fft" class="canvasA" width="380" height="220"></canvas>
+  <canvas id="xy" class="canvasB" width="240" height="240"></canvas>
+  <canvas id="scope" class="canvasB" width="140" height="140"></canvas>
+  <canvas id="worldCanvas" class="canvasB" width="630" height="650"></canvas>
 </div>
 
 <div class="coords">
@@ -154,7 +155,7 @@ X:<span id="posX">0</span> | Y:<span id="posY">0</span>
 </div>
 
 <div class="operation">SPACE KEY：KICK</div>
-<div class="version">Version: v1.1.6</div>
+<div class="version">Version: v1.2.3</div>
 
 <footer class="footer">
   Created by aglassoffog

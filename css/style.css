@@ -1,15 +1,53 @@
 body { background:#111; color:#eee; font-family:sans-serif; }
-label { color:#0ff; }
-select { width:133px; background: #222; color: #aaa; font-size: 12px; }
+label { color:#0ff; text-align: center;}
+select {
+  width:80px;
+  height: 30px;
+  background: #222;
+  color: #aaa;
+  font-size: 12px;
+}
 
-.knob { display:flex; flex-direction:column; font-size:12px; }
+.knob {
+    display:flex;
+    flex-direction:column;
+    width: 58px;
+    height: 70px;
+}
+.fader {
+  /* margin-top:30px; */
+  margin-left: 0px;
+  transform: rotate(-90deg);
+  width: 60px;
+  height: 60px;
+}
+.select-container {
+  display:flex;
+  align-items: center;
+  height: 60px;
+}
+
+
 .coords { font-family:monospace; color:#0ff; margin-top:8px; }
+.disp-val1 { position: absolute; left: 118px; top: 350px;}
+.disp-val2 { position: absolute; left: 192px; top: 350px;}
 .version { color:#888; font-size:12px; }
 .footer { color: #666;  font-size: 11px; }
 
+.container {
+  position: relative;
+  height: 450px;
+  font-size:12px;
+}
+
+.control-container {
+  position: absolute;
+  z-index: 3;
+}
+
 .control-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   margin-top: 10px;
 }
 
@@ -21,16 +59,16 @@ select { width:133px; background: #222; color: #aaa; font-size: 12px; }
 }
 
 .row-label {
-  width: 110px;
+  width: 80px;
   padding-top: 4px;
   font-size: 13px;
   color: #eee;
   font-weight: bold;
 }
 
-.control-row .controls {
+.controls {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -88,7 +126,7 @@ select { width:133px; background: #222; color: #aaa; font-size: 12px; }
 }
 
 .start-btn {
-  width: 60;
+  width: 80px;
   height: 36px;
   border: 1px solid #555;
   background: #222;
@@ -105,8 +143,8 @@ select { width:133px; background: #222; color: #aaa; font-size: 12px; }
 .canvas-container {
   display:flex;
   position: relative;
-  width: 600px;
-  height: 400px;
+  width: 630px;
+  height: 220px;
   gap:6px;
   margin-top:20px;
 }
@@ -114,11 +152,11 @@ select { width:133px; background: #222; color: #aaa; font-size: 12px; }
 .canvasA { background:#000; border:1px solid #333; display:block; }
 .canvasB { background: transparent; border:0; display:block; }
 
-#world {
+#worldCanvas {
   position: absolute;
   left: 0;
-  top: 0;
-  z-index: 3;
+  top: -430px;
+  z-index: 2;
   opacity: 0.7;
 }
 
@@ -131,14 +169,14 @@ select { width:133px; background: #222; color: #aaa; font-size: 12px; }
 
 #xy {
   position: absolute;
-  left: 320px;
+  left: 200px;
   top: -20px;
   z-index: 1;
 }
 
 #scope {
   position: absolute;
-  left: 50px;
+  left: 30px;
   top: 0;
   z-index: 1;
 }

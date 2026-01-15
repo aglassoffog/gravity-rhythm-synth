@@ -26,7 +26,7 @@ const KEY_LIST = [
 const waveformTypes = ["sine", "square", "sawtooth", "triangle"];
 const keyState = {};
 const noteState = {};
-const waveformStates = [];
+const waveformStates = {};
 
 document.querySelectorAll(".key-btn").forEach(btn => {
   const key = btn.dataset.key;
@@ -48,7 +48,6 @@ document.querySelectorAll(".waveform-btn").forEach(btn => {
   btn.onclick = () => {
 
     // 発音中ならその波形全て note off して無効化
-    const w = waveformStates.find(w => w.type === type);
     if (waveformStates[type]) {
       voices.forEach((v, key) => {
         if (v.waveform === type) {
@@ -81,7 +80,6 @@ function isWaveformStillPlaying(type) {
   return false;
 }
 
-
 function triggerRandomNote() {
   // 有効なKEYボタン一覧
   const activeKeys = KEY_LIST.filter(k => keyState[k.key]);
@@ -102,29 +100,17 @@ function triggerRandomNote() {
 
 }
 
-Matter.Events.on(engine, "collisionStart", event => {
+function onSideWallCollision(wall){
   if (!isRunning) return;
 
-  event.pairs.forEach(pair => {
-    const a = pair.bodyA;
-    const b = pair.bodyB;
-
-    // ボールと壁の組み合わせか？
-    if (!isBallWallCollision(a, b)) return;
-
-    const wall = a.label === "ball" ? b : a;
-
-    // 左右の壁だけ反応
-    if (wall.label === "wall-left" || wall.label === "wall-right") {
-      triggerRandomNote();
-    } else if (wall.label === "wall-top" || wall.label === "wall-bottom") {
-      if (yAssign.value === "delay") {
-        boostDelayFeedback();
-      }
+  if (wall.label === "wall-left" || wall.label === "wall-right") {
+    triggerRandomNote();
+  } else if (wall.label === "wall-top" || wall.label === "wall-bottom") {
+    if (yAssign.value === "delay") {
+      boostDelayFeedback();
     }
-
-  });
-});
+  }
+}
 
 
 /* ---------- Audio Nodes ---------- */
@@ -263,14 +249,9 @@ async function initAudio() {
   setupDelay();
   drawLoop();
   modLoop();
-  xyLoop();
-
 }
 
-/* ---------- Helpers ---------- */
-function yNorm() {
-  return Math.min(Math.max(ball.position.y / 400, 0), 1);
-}
+xyLoop();
 
 /* ---------- Modulation Loop ---------- */
 function modLoop() {
