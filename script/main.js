@@ -1,6 +1,7 @@
 /* ---------- Global State ---------- */
 let audioCtx = null;
 let isRunning = false;
+let wakeLock = null;
 
 /* Poly voices */
 const voices = new Map();
@@ -400,6 +401,11 @@ startBtn.onclick = async () => {
 
     randomKickBall();
 
+    try {
+      wakeLock = await navigator.wakeLock.request("screen");
+    } catch (err) {
+    }
+
   } else {
     // ===== STOP =====
     isRunning = false;
@@ -409,6 +415,11 @@ startBtn.onclick = async () => {
     allNotesOff();
     stopBall();
     if (delayFeedback) delayFeedback.gain.value = 0;
+
+    if (wakeLock) {
+      wakeLock.release();
+      wakeLock = null;
+    }
   }
 };
 
