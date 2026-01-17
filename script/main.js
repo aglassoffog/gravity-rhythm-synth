@@ -255,7 +255,7 @@ async function initAudio() {
   modLoop();
 }
 
-xyLoop();
+drawPhysics();
 
 /* ---------- Modulation Loop ---------- */
 function modLoop() {
