@@ -74,11 +74,11 @@ select {
 
 .waveform-buttons {
   display: flex;
-  gap: 10px;
+  gap: 6px;
 }
 
 .waveform-btn {
-  width: 60px;
+  width: 65px;
   height: 36px;
   border: 1px solid #555;
   background: #222;
