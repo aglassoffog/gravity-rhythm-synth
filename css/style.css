@@ -85,7 +85,12 @@ select {
   color: #aaa;
   cursor: pointer;
   font-size: 12px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .waveform-btn.active {
