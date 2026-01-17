@@ -430,7 +430,6 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault(); // ページスクロール防止
 
-    if (!isRunning) return;
     randomKickBall();
   }
 });

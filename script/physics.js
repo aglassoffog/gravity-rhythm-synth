@@ -185,11 +185,11 @@ function getCanvasPos(e) {
 }
 
 function handleCell(e) {
-  // const rect = worldCanvas.getBoundingClientRect();
-  // const mx = e.clientX - rect.left;
-  // const my = e.clientY - rect.top;
   const pos = getCanvasPos(e);
-  if (pos.x < FFT_W) return;
+  if (pos.x < FFT_W){
+    randomKickBall()
+    return;
+  }
   if (pos.x > WORLD_W) return;
   if (pos.y < 0) return;
   if (pos.y > WORLD_H) return;

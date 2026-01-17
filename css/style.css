@@ -15,7 +15,6 @@ select {
     height: 70px;
 }
 .fader {
-  /* margin-top:30px; */
   margin-left: 0px;
   transform: rotate(-90deg);
   width: 60px;
@@ -86,6 +85,7 @@ select {
   color: #aaa;
   cursor: pointer;
   font-size: 12px;
+  text-align: center;
 }
 
 .waveform-btn.active {
