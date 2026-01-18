@@ -6,7 +6,7 @@ const xyCtx = xy.getContext("2d");
 // データ配列
 let timeData = new Float32Array(2048);
 let freqData = new Uint8Array(1024);
-let xyData = new Uint8Array(1024);
+let xyData = new Float32Array(2048);
 let xyOffset = 32;
 
 const triggerLevel = 0;
@@ -63,15 +63,15 @@ function drawLoop(){
   }
 
   // XY
-  analyser.getByteTimeDomainData(xyData);
+  analyser.getFloatTimeDomainData(xyData);
   xyCtx.clearRect(0,0,xy.width,xy.height);
   xyCtx.strokeStyle="#00ff88";
   xyCtx.lineWidth = 2;
   xyCtx.beginPath();
   for(let i=0;i<xyData.length-xyOffset;i++){
-    const xVal=(xyData[i]-128)/128;
-    const yVal=(xyData[i+xyOffset]-128)/128;
-    if (yVal > 0.01 || yVal < -0.01) {
+    const xVal=xyData[i];
+    const yVal=xyData[i+xyOffset];
+    if (xVal > 0.01 || xVal < -0.01) {
       const x=xy.width/2 + xVal*xy.width/2;
       const y=xy.height/2 - yVal*xy.height/2;
       i===0 ? xyCtx.moveTo(x,y) : xyCtx.lineTo(x,y);
