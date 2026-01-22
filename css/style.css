@@ -28,14 +28,14 @@ select {
 
 
 .coords { font-family:monospace; color:#0ff; margin-top:8px; }
-.disp-val1 { position: absolute; left: 118px; top: 350px;}
-.disp-val2 { position: absolute; left: 192px; top: 350px;}
+.disp-val1 { position: absolute; left: 118px; top: 429px;}
+.disp-val2 { position: absolute; left: 192px; top: 429px;}
 .version { color:#888; font-size:12px; }
 .footer { color: #666;  font-size: 11px; }
 
 .container {
   position: relative;
-  height: 450px;
+  height: 520px;
   font-size:12px;
 }
 
@@ -160,7 +160,7 @@ select {
 #worldCanvas {
   position: absolute;
   left: 0;
-  top: -430px;
+  top: -500px;
   z-index: 2;
   opacity: 0.7;
   touch-action: none;

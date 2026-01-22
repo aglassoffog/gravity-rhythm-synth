@@ -116,6 +116,7 @@ function onSideWallCollision(wall){
 
 /* ---------- Audio Nodes ---------- */
 let master, filter, filterGain, bypassGain;
+let reverb;
 let analyser, lfo, lfoGain;
 let baseFilterFreq = 6000;
 
@@ -125,30 +126,8 @@ decay.oninput   = e => envParams.decay   = +e.target.value;
 sustain.oninput = e => envParams.sustain = +e.target.value;
 release.oninput = e => envParams.release = +e.target.value;
 
-/* ---------- Delay ---------- */
-let delayNode, delayFeedback, delayMixer;
-let baseDelayTime = 0.3;
-let baseDelayFeedback = 0.35;
-let baseDelayMix = 0.4;
 
-delayTime.oninput = e => {
-  if (!delayNode) return;
-  baseDelayTime = parseFloat(e.target.value);
-  delayNode.delayTime.setTargetAtTime(baseDelayTime, audioCtx.currentTime, 0.01);
-};
-
-delayFb.oninput = e => {
-  if (!delayFeedback) return;
-  baseDelayFeedback = parseFloat(e.target.value);
-  delayFeedback.gain.setTargetAtTime(baseDelayFeedback, audioCtx.currentTime, 0.01);
-};
-
-delayMix.oninput = e => {
-  if (!delayMixer) return;
-  baseDelayMix = parseFloat(e.target.value);
-  delayMixer.gain.setTargetAtTime(baseDelayMix, audioCtx.currentTime, 0.01);
-};
-
+/* ---------- Filter ---------- */
 filterType.onchange = e => {
   if (!filter) return;
   const now = audioCtx.currentTime;
@@ -175,6 +154,52 @@ filterQ.oninput = e => {
   filter.Q.setTargetAtTime(+e.target.value, audioCtx.currentTime, 0.01);
 };
 
+/* ---------- Delay ---------- */
+let delayNode, delayFeedback, delayMixer;
+let baseDelayTime = 0.3;
+let baseDelayFeedback = 0.35;
+let baseDelayMix = 0.4;
+
+delayTime.oninput = e => {
+  if (!delayNode) return;
+  baseDelayTime = parseFloat(e.target.value);
+  delayNode.delayTime.setTargetAtTime(baseDelayTime, audioCtx.currentTime, 0.01);
+};
+
+delayFb.oninput = e => {
+  if (!delayFeedback) return;
+  baseDelayFeedback = parseFloat(e.target.value);
+  delayFeedback.gain.setTargetAtTime(baseDelayFeedback, audioCtx.currentTime, 0.01);
+};
+
+delayMix.oninput = e => {
+  if (!delayMixer) return;
+  baseDelayMix = parseFloat(e.target.value);
+  delayMixer.gain.setTargetAtTime(baseDelayMix, audioCtx.currentTime, 0.01);
+};
+
+/* ---------- Reverb ---------- */
+reverbMix.addEventListener("input", e => {
+  const v = parseFloat(e.target.value);
+  reverb.wetGain.gain.value = v;
+  reverb.dryGain.gain.value = 1 - v;
+});
+
+reverbDecay.addEventListener("change", e => {
+  const v = parseFloat(e.target.value);
+  reverb.convolver.buffer = generateHallImpulse(v, 3);
+});
+
+reverbTone.addEventListener("input", e => {
+  reverb.tone.frequency.setTargetAtTime(
+    parseFloat(e.target.value),
+    audioCtx.currentTime,
+    0.2
+  );
+});
+
+
+
 function boostDelayFeedback() {
   if (!audioCtx || !delayMixer) return;
   const now = audioCtx.currentTime;
@@ -199,7 +224,7 @@ function setupDelay() {
 
   // wet → mix
   delayNode.connect(delayMixer);
-  delayMixer.connect(master);
+  delayMixer.connect(reverb.input);
 
   filterGain.connect(delayNode);
   bypassGain.connect(delayNode);
@@ -224,9 +249,12 @@ async function initAudio() {
   bypassGain = audioCtx.createGain();
   bypassGain.gain.value = 0;
 
+  setupReverb();
+
+  
   filter.connect(filterGain);
-  filterGain.connect(master);
-  bypassGain.connect(master);
+  filterGain.connect(reverb.input);
+  bypassGain.connect(reverb.input);
 
   analyser = audioCtx.createAnalyser();
   analyser.fftSize = 2048;

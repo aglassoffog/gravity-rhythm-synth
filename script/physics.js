@@ -1,12 +1,12 @@
 const { Engine, Render, World, Bodies, Body, Runner } = Matter;
 const WORLD_W = worldCanvas.width, WORLD_H = worldCanvas.height;
-const HOLE_W = 248, HOLE_H = 650;
+const HOLE_W = 248, HOLE_H = 720;
 const FFT_W = WORLD_W - HOLE_W, FFT_H = 220;
 const BALL_SPEED = 5;
 let ballRadius = 13;
 const obstacleRadius = 4;
 const GRID_X = 14;
-const GRID_Y = 38;
+const GRID_Y = 40;
 const gridObstacles = new Map();
 const wctx = worldCanvas.getContext("2d");
 const cellW = HOLE_W / GRID_X;
