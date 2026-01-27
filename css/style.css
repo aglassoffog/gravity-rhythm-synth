@@ -154,4 +154,5 @@ body { background:#111; color:#eee; font-family:sans-serif; }
   gap:6px;
   margin-top:8px;
   margin-left:75px;
+  z-index: 3;
 }
