@@ -12,7 +12,7 @@ body { background:#111; color:#eee; font-family:sans-serif; }
 
 .container {
   position: relative;
-  height: 345px;
+  height: 350px;
   font-size:12px;
 }
 
@@ -121,7 +121,7 @@ body { background:#111; color:#eee; font-family:sans-serif; }
 #worldCanvas {
   position: absolute;
   left: 75px;
-  top: -390px;
+  top: -395px;
   z-index: 2;
   opacity: 0.7;
   touch-action: none;
@@ -130,21 +130,21 @@ body { background:#111; color:#eee; font-family:sans-serif; }
 #fftCanvas {
   position: absolute;
   left: 75px;
-  top: -390px;
+  top: -395px;
   z-index: 1;
 }
 
 #xy {
   position: absolute;
   left: 460px;
-  top: -420px;
+  top: -425px;
   z-index: 1;
 }
 
 #scope {
   position: absolute;
   left: 170px;
-  top: -400px;
+  top: -405px;
   z-index: 1;
 }
 
