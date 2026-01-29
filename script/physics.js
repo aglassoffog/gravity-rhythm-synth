@@ -129,14 +129,14 @@ Matter.Events.on(engine, "afterUpdate", () => {
 
   if (y < -ballRadius) {
     Body.setPosition(ball, {
-      x: x + WORLD_W/2,
+      x: x + WORLD_W/3*2,
       y: WORLD_H + ballRadius
     });
   }
 
   if (y > WORLD_H + ballRadius) {
     Body.setPosition(ball, {
-      x: x - WORLD_W/2,
+      x: x - WORLD_W/3*2,
       y: -ballRadius
     });
   }

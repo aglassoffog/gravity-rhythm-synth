@@ -13,24 +13,25 @@ function createStage2Bodies(){
       }
     ),
     Bodies.rectangle(
-      WORLD_W/4*3, -20, WORLD_W/2, 40,
+      WORLD_W/3*2, -20, WORLD_W/3*2, 40,
       {
         isStatic: true, label: "wall-top", render: {visible: false}
       }
     ),
     Bodies.rectangle(
-      WORLD_W/4, WORLD_H + 20, WORLD_W/2, 40,
+      WORLD_W/3, WORLD_H + 20, WORLD_W/3*2, 40,
       {
         isStatic: true, label: "wall-bottom", render: {visible: false}
       }
     ),
     Matter.Bodies.fromVertices(
       0,
-      WORLD_H/3-15,
+      WORLD_H/3,
       [
-        { x: 0,   y: 20},
+        { x: 0, y: 20},
         { x: 0, y: -20},
-        { x: WORLD_W/3*2,  y: 20}
+        { x: WORLD_W/3*2-20, y: 20},
+        { x: WORLD_W/3*2-20, y: 30}
       ],
       {
         isStatic: true,
@@ -42,11 +43,12 @@ function createStage2Bodies(){
     ),
     Matter.Bodies.fromVertices(
       WORLD_W,
-      WORLD_H/3*2-15,
+      WORLD_H/3*2-30,
       [
         { x: 0,   y: 20},
         { x: 0, y: -20},
-        { x: -WORLD_W/3*2,  y: 20}
+        { x: -WORLD_W/3*2+20,  y: 20},
+        { x: -WORLD_W/3*2+20,  y: 30}
       ],
       {
         isStatic: true,
