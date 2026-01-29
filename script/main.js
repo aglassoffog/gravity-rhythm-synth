@@ -417,6 +417,7 @@ function allNotesOff() {
 startBtn.onclick = async () => {
   if (!isRunning) {
     // ===== START =====
+    stageSelect.disabled = true;
     await initAudio();
 
     isRunning = true;
@@ -435,6 +436,7 @@ startBtn.onclick = async () => {
   } else {
     // ===== STOP =====
     isRunning = false;
+    stageSelect.disabled = false;
     startBtn.textContent = "START";
     startBtn.classList.toggle("active", false);
 
@@ -448,6 +450,10 @@ startBtn.onclick = async () => {
       wakeLock = null;
     }
   }
+};
+
+stageSelect.onchange = e => {
+  loadStage(e.target.value);
 };
 
 window.addEventListener("keydown", (e) => {

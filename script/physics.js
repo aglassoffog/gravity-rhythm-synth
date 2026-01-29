@@ -1,24 +1,14 @@
 const { Engine, Render, World, Bodies, Body, Runner } = Matter;
 const WORLD_W = worldCanvas.width, WORLD_H = worldCanvas.height;
-const FFT_W = fftCanvas.width + 2, FFT_H = fftCanvas.height;
-const HOLE_W = WORLD_W - FFT_W, HOLE_H = WORLD_H;
 const BALL_SPEED = 5;
 let ballRadius = 13;
-const obstacleRadius = 4;
-const GRID_X = FFT_W + 51;
-const GRID_W = 246;
-const GRID_XC = 14;
-const GRID_YC = 42;
-const angleRad = -(Math.PI/6);
-const gridObstacles = new Map();
 const wctx = worldCanvas.getContext("2d");
-const cellW = GRID_W / GRID_XC;
-const cellH = HOLE_H / GRID_YC;
-
 const engine = Engine.create();
 engine.gravity.y = 0;
 engine.positionIterations = 8;
 engine.velocityIterations = 6;
+
+
 
 const render = Render.create({
   canvas: worldCanvas,
@@ -51,7 +41,7 @@ const stages = {
     return createStage1Bodies();
   },
   stage2() {
-    return [];
+    return createStage2Bodies();
   }
 }
 
@@ -70,6 +60,7 @@ function loadStage(name) {
   });
   Body.setVelocity(ball, { x: 0, y: 0 });
 }
+
 loadStage("stage1");
 
 function handleCell(e) {
@@ -117,6 +108,24 @@ worldCanvas.addEventListener("pointerdown", e => {
   handleCell(e);
 });
 
+Matter.Events.on(engine, "afterUpdate", () => {
+  const { x, y } = ball.position;
+
+  if (y < -ballRadius) {
+    Body.setPosition(ball, {
+      x: x + WORLD_W/2,
+      y: WORLD_H + ballRadius
+    });
+  }
+
+  if (y > WORLD_H + ballRadius) {
+    Body.setPosition(ball, {
+      x: x - WORLD_W/2,
+      y: -ballRadius
+    });
+  }
+});
+
 Matter.Events.on(engine, "collisionStart", event => {
   event.pairs.forEach(pair => {
     const a = pair.bodyA;
@@ -133,12 +142,12 @@ Matter.Events.on(engine, "collisionStart", event => {
 });
 
 function yNorm() {
-  return Math.min(Math.max(ball.position.y / HOLE_H, 0), 1);
+  return Math.min(Math.max(ball.position.y / WORLD_H, 0), 1);
 }
 
 function drawBody(body) {
   const v = body.vertices;
-  wctx.strokeStyle = "#555";
+  wctx.strokeStyle = "#aaa";
   //wctx.strokeStyle = "rgba(255,255,255,0.6)";
   wctx.lineWidth = 1;
 
@@ -147,6 +156,7 @@ function drawBody(body) {
   for (let i = 1; i < v.length; i++) {
     wctx.lineTo(v[i].x, v[i].y);
   }
+  wctx.closePath();
   wctx.stroke();
 }
 

@@ -14,6 +14,12 @@
 
     <div class="controls">
       <button id="startBtn" class="start-btn">START</button>
+      <div class="param">
+        <select id="stageSelect">
+          <option value="stage1" selected>Stage1</option>
+          <option value="stage2">Stage2</option>
+        </select>
+      </div>
     </div>
 
     <div class="control-row">
@@ -201,10 +207,10 @@
 </div>
 
 <div class="canvas-container">
-  <canvas id="fftCanvas" class="canvasA" width="600" height="260"></canvas>
+  <canvas id="fftCanvas" class="canvasA" width="600" height="300"></canvas>
   <canvas id="xy" class="canvasB" width="240" height="240"></canvas>
   <canvas id="scope" class="canvasB" width="140" height="140"></canvas>
-  <canvas id="worldCanvas" class="canvasB" width="600" height="260"></canvas>
+  <canvas id="worldCanvas" class="canvasB" width="600" height="300"></canvas>
 </div>
 
 
@@ -215,6 +221,7 @@
 <script src="script/reverb.js"></script>
 <script src="script/filter.js"></script>
 <script src="script/stage1.js"></script>
+<script src="script/stage2.js"></script>
 <script src="script/physics.js"></script>
 <script src="script/graphs.js"></script>
 <script src="script/main.js"></script>

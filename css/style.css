@@ -7,12 +7,12 @@ body { background:#111; color:#eee; font-family:sans-serif; }
   color: #eee;
   font-weight: bold;
 }
-.version { color:#888; font-size:12px; }
-.footer { color: #666;  font-size: 11px; }
+.version { color:#aaa; font-size:12px; }
+.footer { color: #888;  font-size: 11px; }
 
 .container {
   position: relative;
-  height: 315px;
+  height: 345px;
   font-size:12px;
 }
 
@@ -29,7 +29,7 @@ body { background:#111; color:#eee; font-family:sans-serif; }
 
 .controls {
   display: flex;
-  gap: 14px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -115,13 +115,13 @@ body { background:#111; color:#eee; font-family:sans-serif; }
   margin-top:10px;
 }
 
-.canvasA { background:#000; border:1px solid #333; display:block; }
+.canvasA { background:#000; border:0; display:block; }
 .canvasB { background: transparent; border:0; display:block; }
 
 #worldCanvas {
   position: absolute;
   left: 75px;
-  top: -360px;
+  top: -390px;
   z-index: 2;
   opacity: 0.7;
   touch-action: none;
@@ -130,21 +130,21 @@ body { background:#111; color:#eee; font-family:sans-serif; }
 #fftCanvas {
   position: absolute;
   left: 75px;
-  top: -360px;
+  top: -390px;
   z-index: 1;
 }
 
 #xy {
   position: absolute;
   left: 460px;
-  top: -380px;
+  top: -420px;
   z-index: 1;
 }
 
 #scope {
   position: absolute;
-  left: 150px;
-  top: -360px;
+  left: 170px;
+  top: -400px;
   z-index: 1;
 }
 

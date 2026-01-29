@@ -24,9 +24,6 @@ function createStage1Bodies(){
         isStatic: true, label: "wall-bottom", render: {visible: false}
       }
     )
-
-
-
   ];
 }
 
