@@ -64,11 +64,27 @@ function loadStage(name) {
 loadStage("stage1");
 
 function handleCell(e) {
-  randomKickBall();
+  const rect = worldCanvas.getBoundingClientRect();
+  const cx = (e.clientX - rect.left) * (WORLD_W / rect.width);
+  const cy = (e.clientY - rect.top) * (WORLD_H / rect.height);
+
+  if (cx < WORLD_W/2) {
+    randomKickBall(1);
+  } else {
+    randomKickBall(2);
+  }
 }
 
-function randomKickBall() {
-  const angle = Math.random() * Math.PI * 2;
+function randomKickBall(way) {
+  let angle;
+  if (way === 0) {
+    angle = Math.random() * Math.PI * 2;
+  } else if (way === 1) {
+    angle = (Math.PI / 4 * 3) + Math.random() * (Math.PI / 2);
+  } else {
+    angle = (Math.random() * 2 - 1) * Math.PI / 4;
+  }
+
   const maxSpin = 0.1;
   const spin = (Math.random() * 2 - 1) * maxSpin;
 

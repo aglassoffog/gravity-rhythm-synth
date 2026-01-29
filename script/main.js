@@ -426,7 +426,7 @@ startBtn.onclick = async () => {
 
     if (delay) setDelayFeedback(baseDelayFeedback);
 
-    randomKickBall();
+    randomKickBall(0);
 
     try {
       wakeLock = await navigator.wakeLock.request("screen");
@@ -463,6 +463,6 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault(); // ページスクロール防止
 
-    randomKickBall();
+    randomKickBall(0);
   }
 });
