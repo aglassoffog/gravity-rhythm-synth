@@ -78,8 +78,8 @@ function createCosmicReverb(){
   const tone = audioCtx.createBiquadFilter();
   const output = audioCtx.createGain();
 
-  shimmerDelay.delayTime.value = 0.01;
-  shimmerGain.gain.value = 0.6;
+  shimmerDelay.delayTime.value = 0.015;
+  shimmerGain.gain.value = 0.4;
 
   input.connect(dryGain);
   input.connect(convolver);
@@ -153,8 +153,10 @@ function setupReverb(){
   // reverb = createNebulaReverb();
 
   reverb.convolver.buffer = generateHallImpulse(baseReverbDecay, 2);
+  // hall
   reverb.tone.type = "lowpass";
   reverb.tone.frequency.value = baseReverbTone;
+  // cosmic
   // reverb.tone.type = "highpass";
   // reverb.tone.frequency.value = 600;
 
@@ -162,10 +164,12 @@ function setupReverb(){
 
   // 出力
   reverb.output.connect(delay.input);
+  // drawReverbBuffer(reverb.convolver.buffer);
 }
 
 function setReverbDecay(v) {
-  reverb.convolver.buffer = generateImpulse(v, 3);
+  reverb.convolver.buffer = generateHallImpulse(v, 2);
+  // drawReverbBuffer(generateImpulse(v));
 }
 
 function setReverbTone(v) {
@@ -182,4 +186,32 @@ function setReverbSend(v) {
     audioCtx.currentTime,
     0.01
   );
+}
+
+function drawReverbBuffer(buffer) {
+  if (!buffer) return;
+
+  const canvas = document.getElementById("reverbCanvas");
+  const ctx = reverbCanvas.getContext("2d");
+
+  const data = buffer.getChannelData(0); // L ch
+  const len = data.length;
+
+  ctx.clearRect(0, 0, reverbCanvas.width, reverbCanvas.height);
+
+  ctx.strokeStyle = "#7aa2ff"; // ネオン系
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+
+  for (let i = 0; i < reverbCanvas.width; i++) {
+    const index = Math.floor(i / reverbCanvas.width * len);
+    const v = data[index]; // -1.0〜1.0
+
+    const y = reverbCanvas.height / 2 - v * reverbCanvas.height / 2;
+
+    if (i === 0) ctx.moveTo(i, y);
+    else ctx.lineTo(i, y);
+  }
+
+  ctx.stroke();
 }
