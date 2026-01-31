@@ -13,13 +13,13 @@ function createStage1Bodies(){
       }
     ),
     Bodies.rectangle(
-      WORLD_W/2, -20, WORLD_W, 40,
+      WORLD_W/3*2, -20, WORLD_W/3*2, 40,
       {
         isStatic: true, label: "wall-top", render: {visible: false}
       }
     ),
     Bodies.rectangle(
-      WORLD_W/2, WORLD_H + 20, WORLD_W, 40,
+      WORLD_W/3, WORLD_H + 20, WORLD_W/3*2, 40,
       {
         isStatic: true, label: "wall-bottom", render: {visible: false}
       }

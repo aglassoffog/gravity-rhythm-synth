@@ -65,7 +65,7 @@ document.querySelectorAll(".waveform-btn").forEach(btn => {
 function setNoteButtonState(key, on) {
   const btn = document.querySelector(`.key-btn[data-key="${key}"]`);
   if (!btn) return;
-  btn.classList.toggle("note-on", on);
+  btn.classList.toggle("playing", on);
 }
 
 function setWaveformPlaying(type, playing) {
@@ -233,16 +233,22 @@ reverbSend.oninput = e => {
 };
 
 /* ---------- Physics ---------- */
-gravity.oninput = e => {
-  const g = parseFloat(e.target.value);
-  gravityVal.textContent = g.toFixed(2);
-  setGravity(g);
-};
-
 ballSize.oninput = e => {
   const size = parseFloat(e.target.value);
   ballSizeVal.textContent = size;
   setBallRadius(size);
+};
+
+ballCount.oninput = e => {
+  const count = parseFloat(e.target.value);
+  ballCountVal.textContent = count;
+  setBallCount(count);
+};
+
+gravity.oninput = e => {
+  const g = parseFloat(e.target.value);
+  gravityVal.textContent = g.toFixed(2);
+  setGravity(g);
 };
 
 /* ---------- Audio Init ---------- */
@@ -283,8 +289,7 @@ async function initAudio() {
   drawLoop();
   modLoop();
 }
-
-drawPhysics();
+initPhysics();
 
 /* ---------- Modulation Loop ---------- */
 function modLoop() {
@@ -441,7 +446,7 @@ startBtn.onclick = async () => {
     startBtn.classList.toggle("active", false);
 
     allNotesOff();
-    stopBall();
+    stopBalls();
 
     if (delay) setDelayFeedback(0);
 

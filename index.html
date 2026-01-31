@@ -10,10 +10,10 @@
 <h2>Gravity Rhythm Synth 🌙</h2>
 
 <div class="container">
-  <div class="control-container">
 
-    <div class="controls">
-      <button id="startBtn" class="start-btn">START</button>
+  <div class="control-row">
+    <button id="startBtn" class="start-btn">START</button>
+    <div class="paramRow">
       <div class="param">
         <select id="stageSelect">
           <option value="stage1" selected>Stage1</option>
@@ -21,175 +21,182 @@
         </select>
       </div>
     </div>
+  </div>
 
-    <div class="control-row">
-      <button id="waveBtn" class="popup-btn">Waveform</button>
-      <div id="wavePopup" class="popup hidden">
-        <div class="popupInner">
-          <h2>Waveform</h2>
-          <div class="paramRow">
-            <div class="param">
-              <div class="waveform-buttons">
-                <button class="waveform-btn active" data-waveform="sine">Sine</button>
-                <button class="waveform-btn" data-waveform="square">Square</button>
-                <button class="waveform-btn" data-waveform="sawtooth">Saw</button>
-                <button class="waveform-btn" data-waveform="triangle">Triangle</button>
-              </div>
+  <div class="control-row">
+    <button id="waveBtn" class="popup-btn">Waveform</button>
+    <div id="wavePopup" class="popup hidden">
+      <div class="popupInner">
+        <h2>Waveform</h2>
+        <div class="paramRow">
+          <div class="param">
+            <div class="buttons-row">
+              <button class="waveform-btn active" data-waveform="sine">Sine</button>
+              <button class="waveform-btn" data-waveform="square">Square</button>
+              <button class="waveform-btn" data-waveform="sawtooth">Saw</button>
+              <button class="waveform-btn" data-waveform="triangle">Triangle</button>
             </div>
           </div>
-          <div class="paramRow">
-            <div class="param">
-              <div class="key-buttons">
-                <button class="key-btn active" data-key="c">C</button>
-                <button class="key-btn" data-key="d">D</button>
-                <button class="key-btn" data-key="e">E</button>
-                <button class="key-btn" data-key="f">F</button>
-                <button class="key-btn" data-key="g">G</button>
-                <button class="key-btn" data-key="a">A</button>
-                <button class="key-btn" data-key="b">B</button>
-              </div>
+        </div>
+        <div class="paramRow">
+          <div class="param">
+            <div class="buttons-row">
+              <button class="key-btn active" data-key="c">C</button>
+              <button class="key-btn" data-key="d">D</button>
+              <button class="key-btn" data-key="e">E</button>
+              <button class="key-btn" data-key="f">F</button>
+              <button class="key-btn" data-key="g">G</button>
+              <button class="key-btn" data-key="a">A</button>
+              <button class="key-btn" data-key="b">B</button>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="control-row">
-      <button id="envBtn" class="popup-btn">Envelope</button>
-      <div id="envPopup" class="popup hidden">
-        <div class="popupInner">
-          <h2>Envelope</h2>
-          <div class="paramRow">
-            <div class="param">
-              <input id="attack" type="range" min="0.001" max="1" step="0.001" value="0.01">
-              <span>Attack</span>
-            </div>
-            <div class="param">
-              <input id="decay" type="range" min="0.001" max="1" step="0.001" value="0.1">
-              <span>Decay</span>
-            </div>
-            <div class="param">
-              <input id="sustain" type="range" min="0" max="1" step="0.01" value="0.7">
-              <span>Sustain</span>
-            </div>
-            <div class="param">
-              <input id="release" type="range" min="0.001" max="2" step="0.001" value="0.2">
-              <span>Release</span>
-            </div>
+  <div class="control-row">
+    <button id="envBtn" class="popup-btn">Envelope</button>
+    <div id="envPopup" class="popup hidden">
+      <div class="popupInner">
+        <h2>Envelope</h2>
+        <div class="paramRow">
+          <div class="param">
+            <input id="attack" type="range" min="0.001" max="1" step="0.001" value="0.01">
+            <span>Attack</span>
+          </div>
+          <div class="param">
+            <input id="decay" type="range" min="0.001" max="1" step="0.001" value="0.1">
+            <span>Decay</span>
+          </div>
+          <div class="param">
+            <input id="sustain" type="range" min="0" max="1" step="0.01" value="0.7">
+            <span>Sustain</span>
+          </div>
+          <div class="param">
+            <input id="release" type="range" min="0.001" max="2" step="0.001" value="0.2">
+            <span>Release</span>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="control-row">
-      <button id="filterBtn" class="popup-btn">Filter</button>
-      <div id="filterPopup" class="popup hidden">
-        <div class="popupInner">
-          <h2>Filter</h2>
-          <div class="paramRow">
-            <div class="param">
-              <div class="paramWrap">
-                <select id="filterType">
-                  <option value="off">OFF</option>
-                  <option value="lowpass" selected>LPF</option>
-                  <option value="highpass">HPF</option>
-                  <option value="bandpass">BPF</option>
-                </select>
-              </div>
-              <span>Type</span>
+  <div class="control-row">
+    <button id="filterBtn" class="popup-btn">Filter</button>
+    <div id="filterPopup" class="popup hidden">
+      <div class="popupInner">
+        <h2>Filter</h2>
+        <div class="paramRow">
+          <div class="param">
+            <div class="paramWrap">
+              <select id="filterType">
+                <option value="off">OFF</option>
+                <option value="lowpass" selected>LPF</option>
+                <option value="highpass">HPF</option>
+                <option value="bandpass">BPF</option>
+              </select>
             </div>
-            <div class="param">
-              <input id="filterFreq" type="range" min="100" max="12000" value="6000">
-              <span>Freq</span>
-            </div>
-            <div class="param">
-              <input id="filterQ" type="range" min="0.1" max="20" step="0.1" value="0.7">
-              <span>Q</span>
-            </div>
+            <span>Type</span>
+          </div>
+          <div class="param">
+            <input id="filterFreq" type="range" min="100" max="12000" value="6000">
+            <span>Freq</span>
+          </div>
+          <div class="param">
+            <input id="filterQ" type="range" min="0.1" max="20" step="0.1" value="0.7">
+            <span>Q</span>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="control-row">
-      <button id="delayBtn" class="popup-btn">Delay</button>
-      <div id="delayPopup" class="popup hidden">
-        <div class="popupInner">
-          <h2>Delay</h2>
-          <div class="paramRow">
-            <div class="param">
-              <input id="delayTime" type="range" min="0" max="1.5" step="0.01" value="0.3">
-              <span>Time</span>
-            </div>
-            <div class="param">
-              <input id="delayFeedback" type="range" min="0" max="0.85" step="0.01" value="0.35">
-              <span>Feedback</span>
-            </div>
-            <div class="param">
-              <input id="delaySend" type="range" min="0" max="1" step="0.01" value="0.4">
-              <span>Send</span>
-            </div>
+  <div class="control-row">
+    <button id="delayBtn" class="popup-btn">Delay</button>
+    <div id="delayPopup" class="popup hidden">
+      <div class="popupInner">
+        <h2>Delay</h2>
+        <div class="paramRow">
+          <div class="param">
+            <input id="delayTime" type="range" min="0" max="1.5" step="0.01" value="0.3">
+            <span>Time</span>
+          </div>
+          <div class="param">
+            <input id="delayFeedback" type="range" min="0" max="0.85" step="0.01" value="0.35">
+            <span>Feedback</span>
+          </div>
+          <div class="param">
+            <input id="delaySend" type="range" min="0" max="1" step="0.01" value="0.4">
+            <span>Send</span>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="control-row">
-      <button id="reverbBtn" class="popup-btn">Reverb</button>
-      <div id="reverbPopup" class="popup hidden">
-        <div class="popupInner">
-          <h2>Reverb</h2>
-          <div class="paramRow">
-            <div class="param">
-              <input id="reverbDecay" type="range" min="0.5" max="4" step="0.1" value="2">
-              <span>Decay</span>
-            </div>
-            <div class="param">
-              <input id="reverbTone" type="range" min="800" max="8000" step="50" value="4500">
-              <span>Tone</span>
-            </div>
-            <div class="param">
-              <input id="reverbSend" type="range" min="0" max="1" step="0.01" value="0.4">
-              <span>Send</span>
-            </div>
+  <div class="control-row">
+    <button id="reverbBtn" class="popup-btn">Reverb</button>
+    <div id="reverbPopup" class="popup hidden">
+      <div class="popupInner">
+        <h2>Reverb</h2>
+        <div class="paramRow">
+          <div class="param">
+            <input id="reverbDecay" type="range" min="0.5" max="4" step="0.1" value="2">
+            <span>Decay</span>
+          </div>
+          <div class="param">
+            <input id="reverbTone" type="range" min="800" max="8000" step="50" value="4500">
+            <span>Tone</span>
+          </div>
+          <div class="param">
+            <input id="reverbSend" type="range" min="0" max="1" step="0.01" value="0.4">
+            <span>Send</span>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="control-row">
-      <button id="physicsBtn" class="popup-btn">Physics</button>
-      <div id="physicsPopup" class="popup hidden">
-        <div class="popupInner">
-          <h2>Physics</h2>
-          <div class="paramRow">
-            <div class="param">
-              <div class="paramWrap">
-                <input id="ballSize" type="range" min="5" max="40" step="1" value="13">
-                <div class="paramText" id="ballSizeVal">13</div>
-              </div>
-              <span>Ball Size</span>
+  <div class="control-row">
+    <button id="physicsBtn" class="popup-btn">Physics</button>
+    <div id="physicsPopup" class="popup hidden">
+      <div class="popupInner">
+        <h2>Physics</h2>
+        <div class="paramRow">
+          <div class="param">
+            <div class="paramWrap">
+              <input id="ballSize" type="range" min="5" max="40" step="1" value="13">
+              <div class="paramText" id="ballSizeVal">13</div>
             </div>
-            <div class="param">
-              <div class="paramWrap">
-                <input id="gravity" type="range" min="-0.5" max="0.5" step="0.01" value="0.00">
-                <div class="paramText" id="gravityVal">0</div>
-              </div>
-              <span>Gravity</span>
+            <span>Ball Size</span>
+          </div>
+          <div class="param">
+            <div class="paramWrap">
+              <input id="ballCount" type="range" min="1" max="10" step="1" value="1">
+              <div class="paramText" id="ballCountVal">1</div>
             </div>
-            <div class="param">
-              <div class="paramWrap">
-                <select id="yAssign">
-                  <option value="off">OFF</option>
-                  <option value="pitch">Pitch</option>
-                  <option value="vibrato">Vibrato</option>
-                  <option value="env">Envelope</option>
-                  <option value="filter">Filter</option>
-                  <option value="delay">Delay</option>
-                </select>
-              </div>
-              <span>Y Assign</span>
+            <span>Ball Count</span>
+          </div>
+          <div class="param">
+            <div class="paramWrap">
+              <input id="gravity" type="range" min="-0.5" max="0.5" step="0.01" value="0.00">
+              <div class="paramText" id="gravityVal">0</div>
             </div>
+            <span>Gravity</span>
+          </div>
+          <div class="param">
+            <div class="paramWrap">
+              <select id="yAssign">
+                <option value="off">OFF</option>
+                <option value="pitch">Pitch</option>
+                <option value="vibrato">Vibrato</option>
+                <option value="env">Envelope</option>
+                <option value="filter">Filter</option>
+                <option value="delay">Delay</option>
+              </select>
+            </div>
+            <span>Y Assign</span>
           </div>
         </div>
       </div>
@@ -220,6 +227,7 @@
 <script src="script/delay.js"></script>
 <script src="script/reverb.js"></script>
 <script src="script/filter.js"></script>
+<script src="script/ball.js"></script>
 <script src="script/stage1.js"></script>
 <script src="script/stage2.js"></script>
 <script src="script/physics.js"></script>

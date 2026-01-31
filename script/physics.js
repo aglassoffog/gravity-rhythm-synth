@@ -2,13 +2,12 @@ const { Engine, Render, World, Bodies, Body, Runner } = Matter;
 const WORLD_W = worldCanvas.width, WORLD_H = worldCanvas.height;
 const BALL_SPEED = 5;
 let ballRadius = 13;
+const balls = [];
 const wctx = worldCanvas.getContext("2d");
 const engine = Engine.create();
 engine.gravity.y = 0;
 engine.positionIterations = 8;
 engine.velocityIterations = 6;
-
-
 
 const render = Render.create({
   canvas: worldCanvas,
@@ -20,20 +19,26 @@ Render.run(render);
 const runner = Runner.create();
 Runner.run(runner, engine);
 
-function createBall(x, y) {
-  return Bodies.circle(x, y, ballRadius, {
-    restitution: 1,
-    friction: 0,
-    frictionStatic: 0,
-    frictionAir: 0,
-    // inertia: Infinity,
-    render: {visible: false},
-    label: "ball"
-  });
-}
+function setBallCount(targetCount) {
+  const current = balls.length;
 
-let ball = createBall(WORLD_W/2, WORLD_H/2);
-World.add(engine.world, [ball]);
+  // 増やす
+  if (targetCount > current) {
+    for (let i = 0; i < targetCount - current; i++) {
+      const ball = createBall(WORLD_W/2, WORLD_H/2);
+      balls.push(ball);
+      kickBall(ball, 0);
+    }
+  }
+
+  // 減らす
+  if (targetCount < current) {
+    for (let i = 0; i < current - targetCount; i++) {
+      const ball = balls.pop();
+      World.remove(engine.world, ball);
+    }
+  }
+}
 
 let stageBodies = [];
 const stages = {
@@ -53,15 +58,21 @@ function loadStage(name) {
   stageBodies.push(...newBodies);
 
   World.add(engine.world, stageBodies);
-
-  Body.setPosition(ball, {
-    x: WORLD_W / 2,
-    y: WORLD_H / 2
-  });
-  Body.setVelocity(ball, { x: 0, y: 0 });
+  balls.forEach(startBall);
 }
 
-loadStage("stage1");
+function randomKickBall(way) {
+  balls.forEach(v => kickBall(v, way));
+}
+
+function setBallRadius(newRadius) {
+  ballRadius = newRadius;
+  balls.forEach((ball, i) => changeRadius(ball, i));
+}
+
+function stopBalls() {
+  balls.forEach(stopBall);
+}
 
 function handleCell(e) {
   const rect = worldCanvas.getBoundingClientRect();
@@ -75,71 +86,13 @@ function handleCell(e) {
   }
 }
 
-function randomKickBall(way) {
-  let angle;
-  if (way === 0) {
-    angle = Math.random() * Math.PI * 2;
-  } else if (way === 1) {
-    angle = (Math.PI / 4 * 3) + Math.random() * (Math.PI / 2);
-  } else {
-    angle = (Math.random() * 2 - 1) * Math.PI / 4;
-  }
-
-  const maxSpin = 0.1;
-  const spin = (Math.random() * 2 - 1) * maxSpin;
-
-  Body.setVelocity(ball, { x: 0, y: 0 });
-  Body.setAngularVelocity(ball, spin);
-
-  Body.setVelocity(ball, {
-    x: Math.cos(angle) * BALL_SPEED,
-    y: Math.sin(angle) * BALL_SPEED
-  });
-}
-
-function setBallRadius(newRadius) {
-  ballRadius = newRadius;
-  const { x, y } = ball.position;
-  const v = ball.velocity;
-  const a = ball.angularVelocity;
-
-  World.remove(engine.world, ball);
-  ball = createBall(x, y);
-  World.add(engine.world, ball);
-
-  Body.setVelocity(ball, {
-    x: v.x,
-    y: v.y
-  });
-  Body.setAngularVelocity(ball, a);
-}
-
-function stopBall() {
-  Body.setVelocity(ball, { x: 0, y: 0 });
-  Body.setAngularVelocity(ball, 0);
-}
-
 worldCanvas.addEventListener("pointerdown", e => {
   e.preventDefault();
   handleCell(e);
 });
 
 Matter.Events.on(engine, "afterUpdate", () => {
-  const { x, y } = ball.position;
-
-  if (y < -ballRadius) {
-    Body.setPosition(ball, {
-      x: x + WORLD_W/3*2,
-      y: WORLD_H + ballRadius
-    });
-  }
-
-  if (y > WORLD_H + ballRadius) {
-    Body.setPosition(ball, {
-      x: x - WORLD_W/3*2,
-      y: -ballRadius
-    });
-  }
+  balls.forEach(warpBall);
 });
 
 Matter.Events.on(engine, "collisionStart", event => {
@@ -158,7 +111,7 @@ Matter.Events.on(engine, "collisionStart", event => {
 });
 
 function yNorm() {
-  return Math.min(Math.max(ball.position.y / WORLD_H, 0), 1);
+  return Math.min(Math.max(balls[0].position.y / WORLD_H, 0), 1);
 }
 
 function drawBody(body) {
@@ -176,7 +129,7 @@ function drawBody(body) {
   wctx.stroke();
 }
 
-function drawMoon(){
+function drawMoon(ball){
   wctx.save();
   wctx.translate(ball.position.x, ball.position.y);
   wctx.rotate(ball.angle);
@@ -229,18 +182,40 @@ function drawMoon(){
   wctx.restore();
 }
 
-function drawPhysics(){
+function drawBall(ball) {
+  wctx.save();
+  wctx.translate(ball.position.x, ball.position.y);
+  wctx.rotate(ball.angle);
+
+  wctx.fillStyle = "#7aa2ff";
+  wctx.beginPath();
+  wctx.arc(0, 0, ball.circleRadius, 0, Math.PI * 2);
+  wctx.fill();
+
+  wctx.restore();
+}
+
+function drawPhysics() {
   requestAnimationFrame(drawPhysics);
 
   wctx.clearRect(0, 0, WORLD_W, WORLD_H);
 
   stageBodies.forEach(drawBody);
-  drawMoon();
+  drawMoon(balls[0]);
+  balls.slice(1).forEach(drawBall);
 
-  posX.textContent = ball.position.x.toFixed(1);
-  posY.textContent = ball.position.y.toFixed(1);
+  posX.textContent = balls[0].position.x.toFixed(1);
+  posY.textContent = balls[0].position.y.toFixed(1);
 }
 
-function setGravity(v){
+function setGravity(v) {
   engine.gravity.y = v;
+}
+
+function initPhysics() {
+  const ball = createBall(WORLD_W/2, WORLD_H/2);
+  balls.push(ball);
+
+  loadStage("stage1");
+  drawPhysics();
 }
