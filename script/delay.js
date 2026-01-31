@@ -51,6 +51,9 @@ function setDelaySend(v){
 }
 
 function boostDelayFeedback() {
+  if (!audioCtx) return;
+  if (!isRunning) return;
+
   const now = audioCtx.currentTime;
   delay.wetGain.gain.cancelScheduledValues(now);
   delay.wetGain.gain.setTargetAtTime(baseDelaySend, now, 0.01);

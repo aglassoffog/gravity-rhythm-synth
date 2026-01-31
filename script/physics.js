@@ -101,6 +101,10 @@ Matter.Events.on(engine, "collisionStart", event => {
     const b = pair.bodyB;
 
     if (
+      (a.label === "ball" && b.label === "ball")
+    ){
+      onBallCollision();
+    }else  if (
       (a.label === "ball" && b.label.startsWith("wall")) ||
       (b.label === "ball" && a.label.startsWith("wall"))
     ){

@@ -80,3 +80,27 @@ function drawLoop(){
   xyCtx.stroke();
 }
 
+function drawBuffer(canvas, buffer) {
+  const ctx = canvas.getContext("2d");
+
+  const data = buffer.getChannelData(0); // L ch
+  const len = data.length;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = "#7aa2ff"; // ネオン系
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+
+  for (let i = 0; i < canvas.width; i++) {
+    const index = Math.floor(i / canvas.width * len);
+    const v = data[index]; // -1.0〜1.0
+
+    const y = canvas.height / 2 - v * canvas.height / 2;
+
+    if (i === 0) ctx.moveTo(i, y);
+    else ctx.lineTo(i, y);
+  }
+
+  ctx.stroke();
+}

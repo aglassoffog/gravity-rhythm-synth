@@ -100,6 +100,12 @@ function triggerRandomNote() {
   }
 }
 
+function onBallCollision(){
+  if (baseNoiseType === "crystal") {
+    playCrystal();
+  }
+}
+
 function onSideWallCollision(wall){
   if (!isRunning) return;
 
@@ -154,6 +160,13 @@ physicsPopup.addEventListener("pointerdown", e => {
   }
 });
 
+noiseBtn.onclick = () => {noisePopup.classList.remove("hidden");}
+noisePopup.addEventListener("pointerdown", e => {
+  if (e.target === noisePopup) {
+    noisePopup.classList.add("hidden");
+  }
+});
+
 /* ---------- Audio Nodes ---------- */
 let master;
 let filter, delay, reverb;
@@ -167,7 +180,7 @@ let baseDelaySend = 0.4;
 let baseReverbDecay = 2;
 let baseReverbTone = 4500;
 let baseReverbSend = 0.4;
-
+let baseNoiseType = "off";
 
 /* ---------- Envelope ---------- */
 attack.oninput  = e => envParams.attack  = +e.target.value;
@@ -249,6 +262,11 @@ gravity.oninput = e => {
   const g = parseFloat(e.target.value);
   gravityVal.textContent = g.toFixed(2);
   setGravity(g);
+};
+
+/* ---------- Noise ---------- */
+noiseType.onchange = e => {
+  baseNoiseType = e.target.value;
 };
 
 /* ---------- Audio Init ---------- */
