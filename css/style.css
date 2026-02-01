@@ -2,7 +2,7 @@ body { background:#111; color:#eee; font-family:sans-serif; }
 
 .control-container {
   position: relative;
-  height: 350px;
+  height: 360px;
   font-size:12px;
 }
 
@@ -78,38 +78,47 @@ body { background:#111; color:#eee; font-family:sans-serif; }
 #worldCanvas {
   position: absolute;
   left: 75px;
-  top: -385px;
+  top: -300px;
   z-index: 2;
   opacity: 0.7;
+  touch-action: none;
+}
+
+#reflectCanvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
   touch-action: none;
 }
 
 #fftCanvas {
   position: absolute;
   left: 75px;
-  top: -385px;
+  top: -300px;
   z-index: 1;
 }
 
 #xy {
   position: absolute;
   left: 460px;
-  top: -435px;
+  top: -360px;
   z-index: 1;
 }
 
 #scope {
   position: absolute;
-  left: 170px;
-  top: -415px;
+  left: 480px;
+  top: 0px;
   z-index: 1;
+  opacity: 0.4;
 }
 
 .footer-container {
   display: block;
   position: relative;
   gap:6px;
-  margin-top:8px;
+  margin-top:60px;
   margin-left:75px;
 }
 
