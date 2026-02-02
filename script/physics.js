@@ -138,6 +138,18 @@ function drawBody(body) {
   wctx.stroke();
 }
 
+function drawHideFrame(){
+  wctx.strokeStyle = "#000";
+  wctx.lineWidth = 1;
+  wctx.beginPath();
+  wctx.moveTo(0, 0);
+  wctx.lineTo(WORLD_W, 0);
+  wctx.lineTo(WORLD_W, WORLD_H);
+  wctx.lineTo(0, WORLD_H);
+  wctx.closePath();
+  wctx.stroke();
+}
+
 function drawMoon(ball){
   wctx.save();
   wctx.translate(ball.position.x, ball.position.y);
@@ -233,7 +245,7 @@ function drawPerspectiveReflection() {
 
   rctx.clearRect(0, 0, w, h);
 
-  for (let y = 0; y < h; y++) {
+  for (let y = 0; y < h; y+=2) {
     const t = y / h;
     const p = Math.pow(t, 1.3);
 
@@ -242,7 +254,7 @@ function drawPerspectiveReflection() {
 
     // world 全体をマッピング（上下反転）
     const srcY = WORLD_H * (1 - p) - 1;
-    const sliceH = 1;
+    const sliceH = 2;
 
     rctx.save();
     rctx.translate(w / 2, y);
@@ -250,9 +262,9 @@ function drawPerspectiveReflection() {
 
     rctx.drawImage(
       worldCanvas,
-      1,
+      0,
       srcY,
-      worldCanvas.width-2,
+      worldCanvas.width,
       sliceH,
       -w / 2,
       0,
@@ -322,17 +334,7 @@ function drawPhysics() {
   wctx.clearRect(0, 0, WORLD_W, WORLD_H);
 
   stageBodies.forEach(drawBody);
-
-  wctx.strokeStyle = "#000";
-  wctx.lineWidth = 1;
-  wctx.beginPath();
-  wctx.moveTo(0, 0);
-  wctx.lineTo(WORLD_W, 0);
-  wctx.lineTo(WORLD_W, WORLD_H);
-  wctx.lineTo(0, WORLD_H);
-  wctx.closePath();
-  wctx.stroke();
-
+  drawHideFrame();
   drawMoon(balls[0]);
   balls.slice(1).forEach(drawBall);
 
