@@ -2,12 +2,19 @@
 const sctx = scope.getContext("2d");
 const fctx = fftCanvas.getContext("2d");
 const xyCtx = xy.getContext("2d");
+const spCtx = specCanvas.getContext("2d");
+const bufferCanvas = document.createElement("canvas");
+const bufferCtx = bufferCanvas.getContext("2d", {
+  willReadFrequently: true
+});
+bufferCanvas.width = specCanvas.width;
+bufferCanvas.height = specCanvas.height;
+
 
 // データ配列
 let timeData = new Float32Array(2048);
 let freqData = new Uint8Array(1024);
-let xyData = new Float32Array(2048);
-let xyOffset = 64;
+let xyOffset = 32;
 
 const triggerLevel = 0;
 const samplesToDraw = 280;
@@ -27,14 +34,24 @@ function findTriggerIndex(data){
   return 0;
 }
 
+function spectrogramColor(v) {
+  const a = v / 255;
+  const r = Math.floor(40 + a * 180);
+  const g = Math.floor(30 + a * 120);
+  const b = Math.floor(120 + a * 135);
+  return `rgb(${r},${g},${b})`;
+}
+
 /* ======= メイン描画ループ ======= */
 function drawLoop(){
   requestAnimationFrame(drawLoop);
   if(!audioCtx) return;
   if(!analyser) return;
 
-  // Scope
   analyser.getFloatTimeDomainData(timeData);
+  analyser.getByteFrequencyData(freqData);
+
+  // Scope
   const start = findTriggerIndex(timeData);
   sctx.clearRect(0,0,scope.width,scope.height);
   sctx.strokeStyle="gray";
@@ -53,24 +70,22 @@ function drawLoop(){
 
   // FFT
   const fftHeight = fftCanvas.height;
-  analyser.getByteFrequencyData(freqData);
   fctx.clearRect(0,0,fftCanvas.width,fftCanvas.height);
   const barWidth = fftCanvas.width / freqData.length;
   for(let i=0;i<freqData.length;i++){
-    const h=(freqData[i]/255)*(fftHeight-10);
+    const h=(freqData[i]/255)*(fftHeight-8);
     fctx.fillStyle="#08f";
-    fctx.fillRect(i*barWidth, fftHeight-h-10, barWidth,h);
+    fctx.fillRect(i*barWidth, fftHeight-h-8, barWidth,h);
   }
 
   // XY
-  analyser.getFloatTimeDomainData(xyData);
   xyCtx.clearRect(0,0,xy.width,xy.height);
   xyCtx.strokeStyle="#00ff88";
   xyCtx.lineWidth = 2;
   xyCtx.beginPath();
-  for(let i=0;i<xyData.length-xyOffset;i++){
-    const xVal=xyData[i];
-    const yVal=xyData[i+xyOffset];
+  for(let i=0;i<timeData.length-xyOffset;i++){
+    const xVal=timeData[i];
+    const yVal=timeData[i+xyOffset];
     if (xVal > 0.01 || xVal < -0.01) {
       const x=xy.width/2 + xVal*xy.width/2;
       const y=xy.height/2 - yVal*xy.height/2;
@@ -78,6 +93,49 @@ function drawLoop(){
     }
   }
   xyCtx.stroke();
+
+  // Spectrogram
+  const w = specCanvas.width;
+  const h = specCanvas.height;
+  drawSpecBuffer(w, h);
+  drawSpec(w, h);
+}
+
+function drawSpecBuffer(w, h){
+  // 左に1pxスクロール
+  const img = bufferCtx.getImageData(1, 0, w - 1, h);
+  bufferCtx.putImageData(img, 0, 0);
+
+  // 右端1pxを描画
+  for (let i = 0; i < freqData.length; i++) {
+    const v = freqData[i];
+    const y = i / freqData.length * h;
+
+    bufferCtx.fillStyle = spectrogramColor(v);
+    bufferCtx.fillRect(w - 1, y, 1, h / freqData.length);
+  }
+}
+
+function drawSpec(w, h) {
+  spCtx.clearRect(0, 0, w, h);
+
+  for (let y = 0; y < h; y++) {
+    const t = y / h;
+    const p = Math.pow(t, 1.3);
+    const scaleX = 0.8 + p * 0.2; // ← 横
+
+    spCtx.save();
+    spCtx.translate(w / 2, y);
+    spCtx.scale(scaleX, 1);
+
+    spCtx.drawImage(
+      bufferCanvas,
+      0, y, w, 1,
+      -w / 2, 0, w, 1
+    );
+
+    spCtx.restore();
+  }
 }
 
 function drawBuffer(canvas, buffer) {
