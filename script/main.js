@@ -10,7 +10,7 @@ const voices = new Map();
 const envParams = {
   attack: 0.01,
   decay: 0.1,
-  sustain: 0.7,
+  sustain: 0.3,
   release: 0.2
 };
 
@@ -177,8 +177,8 @@ let baseFilterQ = 0.7;
 let baseDelayTime = 0.3;
 let baseDelayFeedback = 0.35;
 let baseDelaySend = 0.4;
-let baseReverbDecay = 2;
-let baseReverbTone = 4500;
+let baseReverbDecay = 6;
+let baseReverbTone = 250;
 let baseReverbSend = 0.4;
 let baseNoiseType = "off";
 

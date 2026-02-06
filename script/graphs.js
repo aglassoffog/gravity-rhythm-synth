@@ -119,7 +119,7 @@ function drawSpecBuffer(w, h){
 function drawSpec(w, h) {
   spCtx.clearRect(0, 0, w, h);
 
-  for (let y = 0; y < h; y++) {
+  for (let y = 0; y < h; y+=3) {
     const t = y / h;
     const p = Math.pow(t, 1.3);
     const scaleX = 0.8 + p * 0.2; // ← 横
@@ -153,7 +153,6 @@ function drawBuffer(canvas, buffer) {
   for (let i = 0; i < canvas.width; i++) {
     const index = Math.floor(i / canvas.width * len);
     const v = data[index]; // -1.0〜1.0
-
     const y = canvas.height / 2 - v * canvas.height / 2;
 
     if (i === 0) ctx.moveTo(i, y);

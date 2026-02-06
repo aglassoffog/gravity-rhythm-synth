@@ -38,6 +38,30 @@ function generateHallImpulse(duration = 4, decay = 3) {
   return impulse;
 }
 
+function createDeepHallImpulse(duration = 6.0, decay = 4.5, hfDamp = 0.6) {
+
+  const rate = audioCtx.sampleRate;
+  const length = rate * duration;
+  const impulse = audioCtx.createBuffer(2, length, rate);
+
+  for (let ch = 0; ch < 2; ch++) {
+    const data = impulse.getChannelData(ch);
+
+    for (let i = 0; i < length; i++) {
+      const t = i / length;
+
+      let noise = Math.random() * 2 - 1;
+
+      // 低域残す / 高域減衰
+      noise *= Math.pow(1 - t, decay);
+      noise *= 1 - t * hfDamp;
+
+      data[i] = noise;
+    }
+  }
+  return impulse;
+}
+
 function createReverb(){
   const input = audioCtx.createGain();
   const dryGain = audioCtx.createGain();
@@ -46,17 +70,26 @@ function createReverb(){
   const tone = audioCtx.createBiquadFilter();
   const output = audioCtx.createGain();
 
-  // const preDelay = audioCtx.createDelay(0.1); // 最大100ms
-  // preDelay.delayTime.value = 0.04;       // 初期値 20ms
+  const earlyDelay = audioCtx.createDelay();
+  earlyDelay.delayTime.value = 0.025;
+  const earlyGain = audioCtx.createGain();
+  earlyGain.gain.value = 0.2;
+
+  // const preDelay = audioCtx.createDelay(0.2); // 最大200ms
+  // preDelay.delayTime.value = 0.06;       // 初期値 60ms
 
   input.connect(dryGain);
-  input.connect(convolver);
-  // preDelay.connect(convolver);
+  input.connect(wetGain);
+
+  wetGain.connect(earlyDelay);
+  earlyDelay.connect(earlyGain);
+
+  wetGain.connect(convolver);
   convolver.connect(tone);
-  tone.connect(wetGain);
 
   dryGain.connect(output);
-  wetGain.connect(output);
+  earlyDelay.connect(output);
+  tone.connect(output);
 
   return {
     input,
@@ -66,6 +99,54 @@ function createReverb(){
     wetGain,
     output
   };
+}
+
+function setupReverb(){
+  reverb = createReverb();
+  // reverb = createCosmicReverb();
+  // reverb = createNebulaReverb();
+
+  // reverb.convolver.buffer = generateHallImpulse(baseReverbDecay, 2);
+  reverb.convolver.buffer = createDeepHallImpulse(baseReverbDecay);
+
+  // hall
+  // reverb.tone.type = "lowpass";
+  // reverb.tone.frequency.value = baseReverbTone; // 4500
+  // deep hall
+  reverb.tone.type = "lowshelf";
+  reverb.tone.frequency.value = baseReverbTone; // 250
+  reverb.tone.gain.value = 3;
+  // cosmic
+  // reverb.tone.type = "highpass";
+  // reverb.tone.frequency.value = 600;
+
+  reverb.wetGain.gain.value = baseReverbSend;
+
+  // 出力
+  reverb.output.connect(delay.input);
+  // drawBuffer(reverbCanvas, reverb.convolver.buffer);
+}
+
+function setReverbDecay(v) {
+  // reverb.convolver.buffer = generateHallImpulse(v, 2);
+  reverb.convolver.buffer = createDeepHallImpulse(baseReverbDecay);
+  // drawBuffer(reverbCanvas, reverb.convolver.buffer);
+}
+
+function setReverbTone(v) {
+  reverb.tone.frequency.setTargetAtTime(
+    v,
+    audioCtx.currentTime,
+    0.3
+  );
+}
+
+function setReverbSend(v) {
+  reverb.wetGain.gain.setTargetAtTime(
+    v,
+    audioCtx.currentTime,
+    0.01
+  );
 }
 
 function createCosmicReverb(){
@@ -144,74 +225,4 @@ function createNebulaReverb() {
     preDelay,
     output
   };
-}
-
-
-function setupReverb(){
-  reverb = createReverb();
-  // reverb = createCosmicReverb();
-  // reverb = createNebulaReverb();
-
-  reverb.convolver.buffer = generateHallImpulse(baseReverbDecay, 2);
-  // hall
-  reverb.tone.type = "lowpass";
-  reverb.tone.frequency.value = baseReverbTone;
-  // cosmic
-  // reverb.tone.type = "highpass";
-  // reverb.tone.frequency.value = 600;
-
-  reverb.wetGain.gain.value = baseReverbSend;
-
-  // 出力
-  reverb.output.connect(delay.input);
-  // drawReverbBuffer(reverb.convolver.buffer);
-}
-
-function setReverbDecay(v) {
-  reverb.convolver.buffer = generateHallImpulse(v, 2);
-  // drawReverbBuffer(generateImpulse(v));
-}
-
-function setReverbTone(v) {
-  reverb.tone.frequency.setTargetAtTime(
-    v,
-    audioCtx.currentTime,
-    0.3
-  );
-}
-
-function setReverbSend(v) {
-  reverb.wetGain.gain.setTargetAtTime(
-    v,
-    audioCtx.currentTime,
-    0.01
-  );
-}
-
-function drawReverbBuffer(buffer) {
-  if (!buffer) return;
-
-  const canvas = document.getElementById("reverbCanvas");
-  const ctx = reverbCanvas.getContext("2d");
-
-  const data = buffer.getChannelData(0); // L ch
-  const len = data.length;
-
-  ctx.clearRect(0, 0, reverbCanvas.width, reverbCanvas.height);
-
-  ctx.strokeStyle = "#7aa2ff"; // ネオン系
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-
-  for (let i = 0; i < reverbCanvas.width; i++) {
-    const index = Math.floor(i / reverbCanvas.width * len);
-    const v = data[index]; // -1.0〜1.0
-
-    const y = reverbCanvas.height / 2 - v * reverbCanvas.height / 2;
-
-    if (i === 0) ctx.moveTo(i, y);
-    else ctx.lineTo(i, y);
-  }
-
-  ctx.stroke();
 }

@@ -2,7 +2,7 @@ function createDelay(){
   const input = audioCtx.createGain();
   const dryGain = audioCtx.createGain();
   const wetGain = audioCtx.createGain();
-  const node = audioCtx.createDelay(2.0);
+  const node = audioCtx.createDelay();
   const feedback = audioCtx.createGain();
   const output = audioCtx.createGain();
 

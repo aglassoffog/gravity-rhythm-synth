@@ -329,8 +329,7 @@ function drawRipples(time) {
 }
 
 function drawPhysics() {
-  requestAnimationFrame(drawPhysics);
-
+  // Engine.update(engine, 1000 / 60);
   wctx.clearRect(0, 0, WORLD_W, WORLD_H);
 
   stageBodies.forEach(drawBody);
@@ -344,6 +343,8 @@ function drawPhysics() {
 
   posX.textContent = balls[0].position.x.toFixed(1);
   posY.textContent = balls[0].position.y.toFixed(1);
+
+  requestAnimationFrame(drawPhysics);
 }
 
 function setGravity(v) {

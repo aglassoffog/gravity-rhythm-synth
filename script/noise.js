@@ -76,7 +76,7 @@ function playNoise(){
 
   noise.stop(now + duration);
 
-  drawBuffer(noiseCanvas, noise.buffer);
+  // drawBuffer(noiseCanvas, noise.buffer);
 }
 
 function playClick() {
