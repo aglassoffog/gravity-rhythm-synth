@@ -120,6 +120,7 @@ function drawSpec(w, h) {
     const t = y / h;
     const p = Math.pow(t, 1.3);
     const scaleX = 0.8 + p * 0.2; // ← 横
+    const sliceH = 3;
 
     spCtx.save();
     spCtx.translate(w / 2, y);
@@ -127,8 +128,8 @@ function drawSpec(w, h) {
 
     spCtx.drawImage(
       bufferCanvas,
-      0, y, w, 3,
-      -w / 2, 0, w, 3
+      0, y, w, sliceH,
+      -w / 2, 0, w, sliceH
     );
 
     spCtx.restore();

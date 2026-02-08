@@ -41,11 +41,15 @@ const stages = {
   },
   stage2() {
     return createStage2Bodies();
+  },
+  stage3() {
+    return createStage3Bodies();
   }
 }
 const draws = {
   stage1: drawStage1,
-  stage2: drawStage2
+  stage2: drawStage2,
+  stage3: drawStage3
 }
 
 function loadStage(name) {
