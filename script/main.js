@@ -476,6 +476,10 @@ startBtn.onclick = async () => {
 };
 
 stageSelect.onchange = e => {
+  if (e.target.value == "stage2" && gravity.value === "0"){
+    gravity.value = 0.02;
+    gravity.dispatchEvent(new Event("input"));
+  }
   loadStage(e.target.value);
 };
 

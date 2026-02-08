@@ -9,16 +9,8 @@ const engine = Engine.create();
 engine.gravity.y = 0;
 engine.positionIterations = 8;
 engine.velocityIterations = 6;
+Runner.run(Runner.create(), engine);
 
-const render = Render.create({
-  canvas: worldCanvas,
-  engine,
-  options:{ width:WORLD_W, height:WORLD_H, wireframes:false, background:"transparent" }
-});
-
-Render.run(render);
-const runner = Runner.create();
-Runner.run(runner, engine);
 
 function setBallCount(targetCount) {
   const current = balls.length;
@@ -42,6 +34,7 @@ function setBallCount(targetCount) {
 }
 
 let stageBodies = [];
+let drawStage;
 const stages = {
   stage1() {
     return createStage1Bodies();
@@ -49,6 +42,10 @@ const stages = {
   stage2() {
     return createStage2Bodies();
   }
+}
+const draws = {
+  stage1: drawStage1,
+  stage2: drawStage2
 }
 
 function loadStage(name) {
@@ -59,6 +56,7 @@ function loadStage(name) {
   stageBodies.push(...newBodies);
 
   World.add(engine.world, stageBodies);
+  drawStage = draws[name];
   balls.forEach(startBall);
 }
 
@@ -329,11 +327,13 @@ function drawRipples(time) {
 }
 
 function drawPhysics() {
-  // Engine.update(engine, 1000 / 60);
   wctx.clearRect(0, 0, WORLD_W, WORLD_H);
 
   stageBodies.forEach(drawBody);
   drawHideFrame();
+
+  drawStage();
+
   drawMoon(balls[0]);
   balls.slice(1).forEach(drawBall);
 

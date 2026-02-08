@@ -27,5 +27,6 @@ function createStage1Bodies(){
   ];
 }
 
+function drawStage1(){
 
-
+}
