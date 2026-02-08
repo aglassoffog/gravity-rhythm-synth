@@ -4,12 +4,9 @@ const fctx = fftCanvas.getContext("2d");
 const xyCtx = xy.getContext("2d");
 const spCtx = specCanvas.getContext("2d");
 const bufferCanvas = document.createElement("canvas");
-const bufferCtx = bufferCanvas.getContext("2d", {
-  willReadFrequently: true
-});
+const bufferCtx = bufferCanvas.getContext("2d", { willReadFrequently: true });
 bufferCanvas.width = specCanvas.width;
 bufferCanvas.height = specCanvas.height;
-
 
 // データ配列
 let timeData = new Float32Array(2048);
@@ -130,8 +127,8 @@ function drawSpec(w, h) {
 
     spCtx.drawImage(
       bufferCanvas,
-      0, y, w, 1,
-      -w / 2, 0, w, 1
+      0, y, w, 3,
+      -w / 2, 0, w, 3
     );
 
     spCtx.restore();
