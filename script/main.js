@@ -103,6 +103,8 @@ function triggerRandomNote() {
 function onBallCollision(){
   if (baseNoiseType === "crystal") {
     playCrystal();
+  } else if (baseNoiseType === "click") {
+    playClick();
   }
 }
 
@@ -169,7 +171,7 @@ noisePopup.addEventListener("pointerdown", e => {
 
 /* ---------- Audio Nodes ---------- */
 let master;
-let filter, delay, reverb;
+let filter, phaser, delay, reverb;
 let lfo, lfoGain;
 let analyserL, analyserR;
 let baseFilterType = filterType.value;
@@ -281,6 +283,7 @@ async function initAudio() {
 
   setupReverb();
   setupDelay();
+  // setupPhaser();
   setupFilter();
 
   analyserL = audioCtx.createAnalyser();

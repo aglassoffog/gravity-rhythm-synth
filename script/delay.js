@@ -32,7 +32,7 @@ function createDelay(){
     nodeR,
     feedback,
     output
-  }
+  };
 }
 
 function setupDelay(){

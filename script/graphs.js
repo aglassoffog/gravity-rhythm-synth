@@ -47,7 +47,7 @@ function drawLoop(){
   if(!analyserL) return;
 
   analyserL.getFloatTimeDomainData(timeDataL);
-  analyserR.getFloatTimeDomainData(timeDataR);
+  // analyserR.getFloatTimeDomainData(timeDataR);
   analyserL.getByteFrequencyData(freqData);
 
   // Scope
