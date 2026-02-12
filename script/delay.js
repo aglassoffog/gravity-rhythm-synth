@@ -4,8 +4,8 @@ function createDelay(){
   const wetGain = audioCtx.createGain();
   const splitter = audioCtx.createChannelSplitter(2);
   const merger = audioCtx.createChannelMerger(2);
-  const nodeL = audioCtx.createDelay();
-  const nodeR = audioCtx.createDelay();
+  const nodeL = audioCtx.createDelay(2.1);
+  const nodeR = audioCtx.createDelay(2.1);
   const feedback = audioCtx.createGain();
   const output = audioCtx.createGain();
 
