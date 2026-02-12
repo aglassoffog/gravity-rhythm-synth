@@ -105,6 +105,8 @@ function onBallCollision(){
     playCrystal();
   } else if (baseNoiseType === "click") {
     playClick();
+  } else if (baseNoiseType === "wind") {
+    playWind();
   }
 }
 
@@ -184,6 +186,7 @@ let baseReverbDecay = parseFloat(reverbDecay.value);
 let baseReverbTone = parseInt(reverbTone.value);
 let baseReverbSend = parseFloat(reverbSend.value);
 let baseNoiseType = noiseType.value;
+let baseNoiseGain = parseFloat(noiseGain.value);
 
 /* ---------- Envelope ---------- */
 attack.oninput  = e => envParams.attack  = +e.target.value;
@@ -272,6 +275,10 @@ noiseType.onchange = e => {
   baseNoiseType = e.target.value;
 };
 
+noiseGain.onchange = e => {
+  baseNoiseGain = parseFloat(e.target.value);
+};
+
 /* ---------- Audio Init ---------- */
 async function initAudio() {
   if (audioCtx) return;
@@ -285,6 +292,7 @@ async function initAudio() {
   setupDelay();
   // setupPhaser();
   setupFilter();
+  setupNoise();
 
   analyserL = audioCtx.createAnalyser();
   analyserR = audioCtx.createAnalyser();

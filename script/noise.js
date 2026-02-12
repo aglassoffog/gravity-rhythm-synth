@@ -1,3 +1,5 @@
+let pinkNoise;
+
 function createWhiteNoise(duration, strength){
 
   const bufferSize = audioCtx.sampleRate * duration;
@@ -53,11 +55,11 @@ function playNoise(){
   if (!audioCtx) return;
   if (!isRunning) return;
 
-  const strength = 2;
+  const strength = 1;
   const duration = 2; // 50ms
   // const buffer = createWhiteNoise(duration, strength);
-  const buffer = createPinkNoise(duration, strength);
-  // const buffer = createBrownNoise(duration, strength);
+  // const buffer = createPinkNoise(duration, strength);
+  const buffer = createBrownNoise(duration, strength);
   const noise = audioCtx.createBufferSource();
   noise.buffer = buffer;
 
@@ -70,13 +72,63 @@ function playNoise(){
   noise.start();
 
   const now = audioCtx.currentTime;
-  // noiseGain.gain.setValueAtTime(0, now);
-  // noiseGain.gain.linearRampToValueAtTime(0.6 * strength, now + 0.005);
-  // noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+  noiseGain.gain.setValueAtTime(0, now);
+  noiseGain.gain.linearRampToValueAtTime(0.6 * strength, now + 0.005);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
   noise.stop(now + duration);
 
   // drawBuffer(noiseCanvas, noise.buffer);
+}
+
+function playDust() {
+  const grainCount = 12;
+  const now = audioCtx.currentTime;
+
+  for (let i = 0; i < grainCount; i++) {
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = createWhiteNoise(0.015, 1);
+
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.03 + Math.random() * 0.03;
+
+    const tone = audioCtx.createBiquadFilter();
+    tone.type = "bandpass";
+    tone.frequency.value = 800 + Math.random() * 3000;
+    tone.Q.value = 6;
+
+    noise.connect(tone);
+    tone.connect(gain);
+    gain.connect(filter.input);
+
+    noise.start(now + Math.random() * 0.08);
+    noise.stop(now + 0.12);
+  }
+}
+
+function playWind() {
+  if (!audioCtx) return;
+  if (!isRunning) return;
+
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = pinkNoise;
+
+  const tone = audioCtx.createBiquadFilter();
+  tone.type = "lowpass";
+  tone.frequency.value = 1200;
+
+  const gain = audioCtx.createGain();
+
+  noise.connect(tone);
+  tone.connect(gain);
+  gain.connect(filter.input);
+
+  const now = audioCtx.currentTime;
+  gain.gain.setValueAtTime(baseNoiseGain, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 10);
+
+  noise.start();
+  noise.stop(now + 10);
 }
 
 function playClick() {
@@ -89,14 +141,15 @@ function playClick() {
   clickOsc.type = "square";
   clickOsc.frequency.value = 2000;
 
-  clickGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-  clickGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
-
   clickOsc.connect(clickGain);
   clickGain.connect(filter.input);
 
+  const now = audioCtx.currentTime;
+  clickGain.gain.setValueAtTime(baseNoiseGain, now);
+  clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
+
   clickOsc.start();
-  clickOsc.stop(audioCtx.currentTime + 0.02);
+  clickOsc.stop(now + 0.02);
 }
 
 function playCrystal() {
@@ -118,21 +171,17 @@ function playCrystal() {
 
   modOsc.connect(modGain);
   modGain.connect(carrierOsc.frequency);
-
-  crystalGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-  crystalGain.gain.exponentialRampToValueAtTime(
-    0.0001,
-    audioCtx.currentTime + 4
-  );
-
   carrierOsc.connect(crystalGain);
   crystalGain.connect(filter.input);
 
+  const now = audioCtx.currentTime;
+  crystalGain.gain.setValueAtTime(baseNoiseGain, now);
+  crystalGain.gain.exponentialRampToValueAtTime(0.0001, now + 4);
+
   carrierOsc.start();
   modOsc.start();
-
-  carrierOsc.stop(audioCtx.currentTime + 4);
-  modOsc.stop(audioCtx.currentTime + 4);
+  carrierOsc.stop(now + 4);
+  modOsc.stop(now + 4);
 }
 
 function playKarplusStrong(
@@ -179,4 +228,9 @@ function playKarplusStrong(
 
   noise.start(now);
   noise.stop(now + 0.02);
+}
+
+function setupNoise() {
+  pinkNoise = createPinkNoise(6, 1);
+
 }
