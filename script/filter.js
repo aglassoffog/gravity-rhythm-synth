@@ -32,7 +32,7 @@ function setupFilter(){
   filter.wetGain.gain.value = 1;
   filter.dryGain.gain.value = 0;
 
-  filter.output.connect(reverb.input);
+  filter.output.connect(delay.input);
 }
 
 function setFilterType(v){

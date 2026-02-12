@@ -66,34 +66,47 @@ function createReverb(){
   const input = audioCtx.createGain();
   const dryGain = audioCtx.createGain();
   const wetGain = audioCtx.createGain();
+  const merger1 = audioCtx.createChannelMerger(2);
+  const merger2 = audioCtx.createChannelMerger(2);
   const convolver = audioCtx.createConvolver();
   const tone = audioCtx.createBiquadFilter();
   const output = audioCtx.createGain();
 
-  const earlyDelay = audioCtx.createDelay();
-  earlyDelay.delayTime.value = 0.025;
+  const earlyDelayL = audioCtx.createDelay();
+  const earlyDelayR = audioCtx.createDelay();
   const earlyGain = audioCtx.createGain();
-  earlyGain.gain.value = 0.2;
-
-  // const preDelay = audioCtx.createDelay(0.2); // 最大200ms
-  // preDelay.delayTime.value = 0.06;       // 初期値 60ms
+  const preDelayL = audioCtx.createDelay();
+  const preDelayR = audioCtx.createDelay();
 
   input.connect(dryGain);
   input.connect(wetGain);
 
-  wetGain.connect(earlyDelay);
-  earlyDelay.connect(earlyGain);
+  wetGain.connect(earlyDelayL, 0);
+  wetGain.connect(earlyDelayR, 0);
+  earlyDelayL.connect(merger1, 0, 0);
+  earlyDelayR.connect(merger1, 0, 1);
+  merger1.connect(earlyGain);
 
-  wetGain.connect(convolver);
+  // wetGain.connect(convolver);
+  wetGain.connect(preDelayL, 0);
+  wetGain.connect(preDelayR, 0);
+  preDelayL.connect(merger2, 0, 0);
+  preDelayR.connect(merger2, 0, 1);
+  merger2.connect(convolver);
   convolver.connect(tone);
 
   dryGain.connect(output);
-  earlyDelay.connect(output);
+  earlyGain.connect(output);
   tone.connect(output);
 
   return {
     input,
     dryGain,
+    earlyDelayL,
+    earlyDelayR,
+    earlyGain,
+    preDelayL,
+    preDelayR,
     convolver,
     tone,
     wetGain,
@@ -105,6 +118,12 @@ function setupReverb(){
   reverb = createReverb();
   // reverb = createCosmicReverb();
   // reverb = createNebulaReverb();
+
+  reverb.earlyDelayL.delayTime.value = 0.026; // 初期値 25ms
+  reverb.earlyDelayR.delayTime.value = 0.044;
+  reverb.earlyGain.gain.value = 0.8;
+  reverb.preDelayL.delayTime.value = 0.062; // 初期値 60ms
+  reverb.preDelayR.delayTime.value = 0.078;
 
   // reverb.convolver.buffer = generateHallImpulse(baseReverbDecay, 2);
   reverb.convolver.buffer = createDeepHallImpulse(baseReverbDecay);
@@ -123,7 +142,7 @@ function setupReverb(){
   reverb.wetGain.gain.value = baseReverbSend;
 
   // 出力
-  reverb.output.connect(delay.input);
+  reverb.output.connect(master);
   // drawBuffer(reverbCanvas, reverb.convolver.buffer);
 }
 

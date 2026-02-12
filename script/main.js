@@ -279,8 +279,8 @@ async function initAudio() {
   master = audioCtx.createGain();
   master.gain.value = 0.25;
 
-  setupDelay();
   setupReverb();
+  setupDelay();
   setupFilter();
 
   analyserL = audioCtx.createAnalyser();
