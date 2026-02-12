@@ -2,26 +2,35 @@ function createDelay(){
   const input = audioCtx.createGain();
   const dryGain = audioCtx.createGain();
   const wetGain = audioCtx.createGain();
-  const node = audioCtx.createDelay();
+  const splitter = audioCtx.createChannelSplitter(2);
+  const merger = audioCtx.createChannelMerger(2);
+  const nodeL = audioCtx.createDelay();
+  const nodeR = audioCtx.createDelay();
   const feedback = audioCtx.createGain();
   const output = audioCtx.createGain();
 
   input.connect(dryGain);
-  input.connect(node);
+  input.connect(wetGain);
 
-  node.connect(feedback);
-  feedback.connect(node);
-  node.connect(wetGain);
+  wetGain.connect(splitter);
+  splitter.connect(nodeL, 0);
+  splitter.connect(nodeR, 1);
+  nodeL.connect(merger, 0, 0);
+  nodeR.connect(merger, 0, 1);
 
-  dryGain.connect(output); 
-  wetGain.connect(output);
+  merger.connect(feedback);
+  feedback.connect(splitter);
+
+  dryGain.connect(output);
+  merger.connect(output);
 
   return {
     input,
     dryGain,
-    node,
-    feedback,
     wetGain,
+    nodeL,
+    nodeR,
+    feedback,
     output
   }
 }
@@ -29,7 +38,8 @@ function createDelay(){
 function setupDelay(){
   delay = createDelay();
 
-  delay.node.delayTime.value = baseDelayTime;
+  delay.nodeL.delayTime.value = baseDelayTime + 0.002;
+  delay.nodeR.delayTime.value = baseDelayTime + 0.020;
   delay.feedback.gain.value = baseDelayFeedback;
   delay.wetGain.gain.value = baseDelaySend;
 
@@ -37,7 +47,8 @@ function setupDelay(){
 }
 
 function setDelayTime(v){
-  delay.node.delayTime.setTargetAtTime(v, audioCtx.currentTime, 0.01);
+  delay.nodeL.delayTime.setTargetAtTime(v + 0.002, audioCtx.currentTime, 0.01);
+  delay.nodeR.delayTime.setTargetAtTime(v + 0.020, audioCtx.currentTime, 0.01);
 }
 
 function setDelayFeedback(v){

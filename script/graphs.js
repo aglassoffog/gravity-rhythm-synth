@@ -9,7 +9,8 @@ bufferCanvas.width = specCanvas.width;
 bufferCanvas.height = specCanvas.height;
 
 // データ配列
-let timeData = new Float32Array(2048);
+let timeDataL = new Float32Array(2048);
+let timeDataR = new Float32Array(2048);
 let freqData = new Uint8Array(1024);
 let xyOffset = 32;
 
@@ -43,21 +44,22 @@ function spectrogramColor(v) {
 function drawLoop(){
   requestAnimationFrame(drawLoop);
   if(!audioCtx) return;
-  if(!analyser) return;
+  if(!analyserL) return;
 
-  analyser.getFloatTimeDomainData(timeData);
-  analyser.getByteFrequencyData(freqData);
+  analyserL.getFloatTimeDomainData(timeDataL);
+  analyserR.getFloatTimeDomainData(timeDataR);
+  analyserL.getByteFrequencyData(freqData);
 
   // Scope
-  const start = findTriggerIndex(timeData);
+  const start = findTriggerIndex(timeDataL);
   sctx.clearRect(0,0,scope.width,scope.height);
   sctx.strokeStyle="gray";
   sctx.lineWidth=2;
   sctx.beginPath();
   if(start !== 0) {
     for(let i=0;i<samplesToDraw;i++){
-      const idx=(start+i)%timeData.length;
-      const v=timeData[idx];
+      const idx=(start+i)%timeDataL.length;
+      const v=timeDataL[idx];
       const x=(i/samplesToDraw)*scope.width;
       const y=scope.height/2 - v*scope.height/2;
       i===0 ? sctx.moveTo(x,y) : sctx.lineTo(x,y);
@@ -80,9 +82,9 @@ function drawLoop(){
   xyCtx.strokeStyle="#00ff88";
   xyCtx.lineWidth = 2;
   xyCtx.beginPath();
-  for(let i=0;i<timeData.length-xyOffset;i++){
-    const xVal=timeData[i];
-    const yVal=timeData[i+xyOffset];
+  for(let i=0;i<timeDataL.length-xyOffset;i++){
+    const xVal=timeDataL[i];
+    const yVal=timeDataL[i+xyOffset];
     if (xVal > 0.01 || xVal < -0.01) {
       const x=xy.width/2 + xVal*xy.width/2;
       const y=xy.height/2 - yVal*xy.height/2;

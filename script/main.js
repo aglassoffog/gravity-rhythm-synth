@@ -8,10 +8,10 @@ const voices = new Map();
 
 /* ADSR Envelope Parameters */
 const envParams = {
-  attack: 0.01,
-  decay: 0.1,
-  sustain: 0.3,
-  release: 0.2
+  attack: parseFloat(attack.value),
+  decay: parseFloat(decay.value),
+  sustain: parseFloat(sustain.value),
+  release: parseFloat(release.value)
 };
 
 const KEY_LIST = [
@@ -170,17 +170,18 @@ noisePopup.addEventListener("pointerdown", e => {
 /* ---------- Audio Nodes ---------- */
 let master;
 let filter, delay, reverb;
-let analyser, lfo, lfoGain;
-let baseFilterType = "lowpass";
-let baseFilterFreq = 6000;
-let baseFilterQ = 0.7;
-let baseDelayTime = 0.3;
-let baseDelayFeedback = 0.35;
-let baseDelaySend = 0.4;
-let baseReverbDecay = 6;
-let baseReverbTone = 250;
-let baseReverbSend = 0.4;
-let baseNoiseType = "off";
+let lfo, lfoGain;
+let analyserL, analyserR;
+let baseFilterType = filterType.value;
+let baseFilterFreq = parseInt(filterFreq.value);
+let baseFilterQ = parseFloat(filterQ.value);
+let baseDelayTime = parseFloat(delayTime.value);
+let baseDelayFeedback = parseFloat(delayFeedback.value);
+let baseDelaySend = parseFloat(delaySend.value);
+let baseReverbDecay = parseFloat(reverbDecay.value);
+let baseReverbTone = parseInt(reverbTone.value);
+let baseReverbSend = parseFloat(reverbSend.value);
+let baseNoiseType = noiseType.value;
 
 /* ---------- Envelope ---------- */
 attack.oninput  = e => envParams.attack  = +e.target.value;
@@ -282,15 +283,21 @@ async function initAudio() {
   setupReverb();
   setupFilter();
 
-  analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 2048;
-  analyser.smoothingTimeConstant = 0.8;
-  master.connect(analyser);
+  analyserL = audioCtx.createAnalyser();
+  analyserR = audioCtx.createAnalyser();
+  analyserL.fftSize = 2048;
+  analyserR.fftSize = 2048;
+  analyserL.smoothingTimeConstant = 0.8;
+  analyserR.smoothingTimeConstant = 0.8;
+  const splitter = audioCtx.createChannelSplitter(2);
+  master.connect(splitter);
+  splitter.connect(analyserL, 0);
+  splitter.connect(analyserR, 1);
 
   const destination = audioCtx.createMediaStreamDestination();
   audioEl.srcObject = destination.stream;
   audioEl.play();
-  analyser.connect(destination);
+  master.connect(destination);
 
   /* LFO */
   lfo = audioCtx.createOscillator();
