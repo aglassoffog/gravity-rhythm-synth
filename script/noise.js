@@ -1,4 +1,5 @@
 let pinkNoise;
+let whiteNoise;
 
 function createWhiteNoise(duration, strength){
 
@@ -184,6 +185,87 @@ function playCrystal() {
   modOsc.stop(now + 4);
 }
 
+function playGlitch() {
+  const now = audioCtx.currentTime;
+
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = createWhiteNoise(2, 1);
+
+  // 再生位置ランダム（重要）
+  const offset = Math.random();
+
+  // ランダムピッチ
+  noise.playbackRate.value = 0.5 + Math.random() * 2;
+
+  // 共鳴フィルター
+  const tone = audioCtx.createBiquadFilter();
+  tone.type = "bandpass";
+  tone.frequency.value = 1000 + Math.random() * 8000;
+  tone.Q.value = 20 + Math.random() * 30;
+
+  // リング変調
+  const ringOsc = audioCtx.createOscillator();
+  ringOsc.frequency.value = 300 + Math.random() * 4000;
+
+  const ringGain = audioCtx.createGain();
+  ringGain.gain.value = 1;
+
+  ringOsc.connect(ringGain.gain);
+
+  // 超短エンベロープ
+  const gain = audioCtx.createGain();
+  const length = 0.5 + Math.random() * 0.5;
+
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(1, now + 0.001);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + length);
+
+  // 接続
+  noise.connect(ringGain);
+  ringGain.connect(tone);
+  tone.connect(gain);
+  gain.connect(filter.input);
+
+  noise.start(now, offset);
+  noise.stop(now + length);
+  ringOsc.start(now);
+  ringOsc.stop(now + length);
+}
+
+function playMetal() {
+
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = whiteNoise;
+
+  const tone = audioCtx.createBiquadFilter();
+  tone.type = "bandpass";
+  tone.frequency.value = 3650;
+  tone.Q.value = 500;
+
+  const gain = audioCtx.createGain();
+  const osc = audioCtx.createOscillator();
+  osc.frequency.value = 1200;
+
+  const ringGain = audioCtx.createGain();
+  ringGain.gain.value = 1;
+
+  osc.connect(ringGain.gain);
+  noise.connect(ringGain);
+  ringGain.connect(tone);
+  tone.connect(gain);
+  gain.connect(filter.input);
+
+  const now = audioCtx.currentTime;
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(1 + baseNoiseGain, now + 0.001);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 1);
+
+  noise.start(now);
+  noise.stop(now + 1);
+  osc.start(now);
+  osc.stop(now + 1);
+}
+
 function playKarplusStrong(
   frequency = 220,
   // decay = 0.98,
@@ -232,5 +314,6 @@ function playKarplusStrong(
 
 function setupNoise() {
   pinkNoise = createPinkNoise(6, 1);
+  whiteNoise = createWhiteNoise(2, 1);
 
 }

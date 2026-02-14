@@ -107,6 +107,8 @@ function onBallCollision(){
     playClick();
   } else if (baseNoiseType === "wind") {
     playWind();
+  } else if (baseNoiseType === "metal") {
+    playMetal();
   }
 }
 
