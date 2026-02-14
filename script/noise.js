@@ -233,6 +233,8 @@ function playGlitch() {
 }
 
 function playMetal() {
+  if (!audioCtx) return;
+  if (!isRunning) return;
 
   const noise = audioCtx.createBufferSource();
   noise.buffer = whiteNoise;
