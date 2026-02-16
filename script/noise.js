@@ -1,5 +1,28 @@
 let pinkNoise;
 let whiteNoise;
+let bounceBuffer;
+
+function createBounceBuffer(){
+  const retroRate = 8000;
+  const duration = 0.18;
+  const length = retroRate * duration;
+
+  const buffer = audioCtx.createBuffer(1, length, retroRate);
+  const data = buffer.getChannelData(0);
+
+  let freqStart = 400;
+  let freqEnd = 800;
+
+  for (let i = 0; i < length; i++) {
+    const t = i / retroRate;
+    const freq = freqStart * Math.pow(freqEnd / freqStart, t / duration);
+    const phase = 2 * Math.PI * freq * t;
+    const sample = Math.sin(phase);
+    data[i] = sample;
+  }
+
+  return buffer;
+}
 
 function createWhiteNoise(duration, strength){
 
@@ -268,6 +291,31 @@ function playMetal() {
   osc.stop(now + 1);
 }
 
+function playBounce() {
+  if (!audioCtx) return;
+  if (!isRunning) return;
+
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = bounceBuffer;
+  const tone = audioCtx.createBiquadFilter();
+  tone.type = "lowpass";
+  tone.frequency.value = 1000;
+  const gain = audioCtx.createGain();
+
+  noise.connect(tone);
+  tone.connect(gain);
+  gain.connect(filter.input);
+
+  const now = audioCtx.currentTime;
+
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(baseNoiseGain, now + 0.005);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+  noise.start(now);
+  noise.stop(now + 0.5);
+}
+
 function playKarplusStrong(
   frequency = 220,
   // decay = 0.98,
@@ -317,5 +365,6 @@ function playKarplusStrong(
 function setupNoise() {
   pinkNoise = createPinkNoise(6, 1);
   whiteNoise = createWhiteNoise(2, 1);
+  bounceBuffer = createBounceBuffer();
 
 }
