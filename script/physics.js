@@ -125,6 +125,10 @@ function yNorm() {
   return Math.min(Math.max(balls[0].position.y / WORLD_H, 0), 1);
 }
 
+function xNorm() {
+  return Math.min(Math.max(balls[0].position.x / WORLD_W, 0), 1);
+}
+
 function drawBody(body) {
   const v = body.vertices;
   wctx.strokeStyle = "#aaa";

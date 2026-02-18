@@ -336,14 +336,26 @@ function modLoop() {
   if (!audioCtx) return;
 
   const y = yNorm();
+  const x = xNorm();
   const now = audioCtx.currentTime;
 
-  if (yAssign.value === "pitch") {
+  if (yAssign.value === "pitch" && xAssign.value === "pitch") {
+    voices.forEach(v => {
+        v.osc.frequency.setValueAtTime(v.baseFreq * Math.pow(2, (x - y)), now);
+    });
+  }
+  else if (yAssign.value === "pitch") {
     voices.forEach(v => {
         v.osc.frequency.setValueAtTime(v.baseFreq * Math.pow(2, 0.5 - y), now);
     });
   }
-  else if (yAssign.value === "vibrato") {
+  else if (xAssign.value === "pitch") {
+    voices.forEach(v => {
+        v.osc.frequency.setValueAtTime(v.baseFreq * Math.pow(2, x - 0.5), now);
+    });
+  }
+
+  if (yAssign.value === "vibrato") {
     lfoGain.gain.value = y * 20;
   }
   else if (yAssign.value === "filter") {
@@ -378,6 +390,17 @@ yAssign.onchange = () => {
     setDelaySend(baseDelaySend);
   }
 };
+
+xAssign.onchange = () => {
+
+  const now = audioCtx.currentTime;
+
+  if (xAssign.value !== "pitch") {
+    voices.forEach(v => {
+      v.osc.frequency.setValueAtTime(v.baseFreq, now);
+    });
+  }
+}
 
 /* ---------- Note Handling ---------- */
 function noteOn(key, freq, waveform) {
