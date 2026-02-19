@@ -327,12 +327,12 @@ async function initAudio() {
   await audioCtx.resume();
 
   drawLoop();
-  modLoop();
+  requestAnimationFrame(modLoop);
 }
 initPhysics();
 
 /* ---------- Modulation Loop ---------- */
-function modLoop() {
+function mod() {
   if (!audioCtx) return;
 
   const y = yNorm();
@@ -341,12 +341,12 @@ function modLoop() {
 
   if (yAssign.value === "pitch" && xAssign.value === "pitch") {
     voices.forEach(v => {
-        v.osc.frequency.setValueAtTime(v.baseFreq * Math.pow(2, (x - y)), now);
+        v.osc.frequency.setValueAtTime(v.baseFreq * Math.pow(2, y + x), now);
     });
   }
   else if (yAssign.value === "pitch") {
     voices.forEach(v => {
-        v.osc.frequency.setValueAtTime(v.baseFreq * Math.pow(2, 0.5 - y), now);
+        v.osc.frequency.setValueAtTime(v.baseFreq * Math.pow(2, y - 0.5), now);
     });
   }
   else if (xAssign.value === "pitch") {
@@ -355,13 +355,33 @@ function modLoop() {
     });
   }
 
-  if (yAssign.value === "vibrato") {
+  if (yAssign.value === "vibrato" && xAssign.value === "vibrato") {
+    lfoGain.gain.value = y * 20 + x * 20;
+  }
+  else if (yAssign.value === "vibrato") {
     lfoGain.gain.value = y * 20;
   }
-  else if (yAssign.value === "filter") {
+  else if (xAssign.value === "vibrato") {
+    lfoGain.gain.value = x * 20;
+  }
+
+  if (yAssign.value === "filter") {
     const cutoff = 200 + (1 - y) * 12000;
     setFilterFreq(cutoff);
   }
+}
+
+let lastTime = 0;
+const fps = 30;
+const interval = 1000 / fps;
+
+function modLoop(now) {
+
+  if (now - lastTime >= interval) {
+    lastTime = now;
+    mod();
+  }
+
   requestAnimationFrame(modLoop);
 }
 
@@ -376,8 +396,8 @@ yAssign.onchange = () => {
     });
   }
 
-  if (yAssign.value !== "vibrato") {
-      lfoGain.gain.value = 0;
+  if (yAssign.value !== "vibrato" && xAssign.value !== "vibrato") {
+    lfoGain.gain.value = 0;
   }
 
   if (yAssign.value !== "filter") {
@@ -400,6 +420,11 @@ xAssign.onchange = () => {
       v.osc.frequency.setValueAtTime(v.baseFreq, now);
     });
   }
+
+  if (xAssign.value !== "vibrato" && yAssign.value !== "vibrato") {
+    lfoGain.gain.value = 0;
+  }
+
 }
 
 /* ---------- Note Handling ---------- */

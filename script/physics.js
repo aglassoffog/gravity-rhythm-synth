@@ -122,7 +122,7 @@ Matter.Events.on(engine, "collisionStart", event => {
 });
 
 function yNorm() {
-  return Math.min(Math.max(balls[0].position.y / WORLD_H, 0), 1);
+  return 1 - Math.min(Math.max(balls[0].position.y / WORLD_H, 0), 1);
 }
 
 function xNorm() {
