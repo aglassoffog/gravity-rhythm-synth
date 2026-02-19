@@ -341,7 +341,7 @@ function mod() {
 
   if (yAssign.value === "pitch" && xAssign.value === "pitch") {
     voices.forEach(v => {
-        v.osc.frequency.setValueAtTime(v.baseFreq * Math.pow(2, y + x), now);
+        v.osc.frequency.setValueAtTime(v.baseFreq * Math.pow(2, y + x - 1), now);
     });
   }
   else if (yAssign.value === "pitch") {
@@ -367,16 +367,23 @@ function mod() {
 
   if (yAssign.value === "filter" && xAssign.value === "filter") {
     // max 22050
-    const cutoff = 50 + y * 11000 + x * 11000;
-    setFilterFreq(cutoff);
+    setFilterFreq(50 + y * 11000 + x * 11000);
   }
   else if (yAssign.value === "filter") {
-    const cutoff = 50 + y * 11000;
-    setFilterFreq(cutoff);
+    setFilterFreq(50 + y * 11000);
   }
   else if (xAssign.value === "filter") {
-    const cutoff = 50 + x * 11000;
-    setFilterFreq(cutoff);
+    setFilterFreq(50 + x * 11000);
+  }
+
+  if (yAssign.value === "reverb" && xAssign.value === "reverb") {
+    setReverbSend(0.2 + y * 0.8 + x * 0.8);
+  }
+  else if (yAssign.value === "reverb") {
+    setReverbSend(0.2 + y * 0.8);
+  }
+  else if (xAssign.value === "reverb") {
+    setReverbSend(0.2 + x * 0.8);
   }
 
 }
@@ -419,6 +426,11 @@ yAssign.onchange = () => {
   } else {
     setDelaySend(baseDelaySend);
   }
+
+  if (yAssign.value !== "reverb" && xAssign.value !== "reverb") {
+    setReverbSend(baseReverbSend);
+  }
+
 };
 
 xAssign.onchange = () => {
@@ -439,6 +451,11 @@ xAssign.onchange = () => {
   if (xAssign.value !== "filter" && yAssign.value !== "filter") {
     setFilterFreq(baseFilterFreq);
   }
+
+  if (xAssign.value !== "reverb" && yAssign.value !== "reverb") {
+    setReverbSend(baseReverbSend);
+  }
+
 };
 
 /* ---------- Note Handling ---------- */
