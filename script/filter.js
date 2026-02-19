@@ -50,11 +50,9 @@ function setFilterType(v){
 }
 
 function setFilterFreq(v){
-  const now = audioCtx.currentTime;
-  filter.tone.frequency.cancelScheduledValues(now);
   filter.tone.frequency.setTargetAtTime(
     v,
-    now,
+    audioCtx.currentTime,
     0.01
   );
 }

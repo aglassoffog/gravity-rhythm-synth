@@ -365,10 +365,20 @@ function mod() {
     lfoGain.gain.value = x * 20;
   }
 
-  if (yAssign.value === "filter") {
-    const cutoff = 200 + (1 - y) * 12000;
+  if (yAssign.value === "filter" && xAssign.value === "filter") {
+    // max 22050
+    const cutoff = 50 + y * 11000 + x * 11000;
     setFilterFreq(cutoff);
   }
+  else if (yAssign.value === "filter") {
+    const cutoff = 50 + y * 11000;
+    setFilterFreq(cutoff);
+  }
+  else if (xAssign.value === "filter") {
+    const cutoff = 50 + x * 11000;
+    setFilterFreq(cutoff);
+  }
+
 }
 
 let lastTime = 0;
@@ -400,7 +410,7 @@ yAssign.onchange = () => {
     lfoGain.gain.value = 0;
   }
 
-  if (yAssign.value !== "filter") {
+  if (yAssign.value !== "filter" && xAssign.value !== "filter") {
     setFilterFreq(baseFilterFreq);
   }
 
@@ -412,6 +422,7 @@ yAssign.onchange = () => {
 };
 
 xAssign.onchange = () => {
+  if (!audioCtx) return;
 
   const now = audioCtx.currentTime;
 
@@ -425,7 +436,10 @@ xAssign.onchange = () => {
     lfoGain.gain.value = 0;
   }
 
-}
+  if (xAssign.value !== "filter" && yAssign.value !== "filter") {
+    setFilterFreq(baseFilterFreq);
+  }
+};
 
 /* ---------- Note Handling ---------- */
 function noteOn(key, freq, waveform) {
