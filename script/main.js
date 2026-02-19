@@ -101,16 +101,29 @@ function triggerRandomNote() {
 }
 
 function onBallCollision(){
+  const y = yNorm();
+  const x = xNorm();
+  let gain = baseNoiseGain;
+  if (yAssign.value === "noise" && xAssign.value === "noise") {
+    gain = 0.3 + y * 0.7 + x * 0.7;
+  }
+  else if (yAssign.value === "noise") {
+    gain = 0.3 + y * 0.7;
+  }
+  else if (xAssign.value === "noise") {
+    gain = 0.3 + x * 0.7;
+  }
+
   if (baseNoiseType === "crystal") {
-    playCrystal();
+    playCrystal(gain);
   } else if (baseNoiseType === "click") {
-    playClick();
+    playClick(gain);
   } else if (baseNoiseType === "wind") {
-    playWind();
+    playWind(gain);
   } else if (baseNoiseType === "metal") {
-    playMetal();
+    playMetal(gain);
   } else if (baseNoiseType === "bounce") {
-    playBounce();
+    playBounce(gain);
   }
 }
 

@@ -130,7 +130,7 @@ function playDust() {
   }
 }
 
-function playWind() {
+function playWind(v) {
   if (!audioCtx) return;
   if (!isRunning) return;
 
@@ -148,14 +148,14 @@ function playWind() {
   gain.connect(filter.input);
 
   const now = audioCtx.currentTime;
-  gain.gain.setValueAtTime(baseNoiseGain, now);
+  gain.gain.setValueAtTime(v, now);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 10);
 
   noise.start();
   noise.stop(now + 10);
 }
 
-function playClick() {
+function playClick(v) {
   if (!audioCtx) return;
   if (!isRunning) return;
 
@@ -169,14 +169,14 @@ function playClick() {
   clickGain.connect(filter.input);
 
   const now = audioCtx.currentTime;
-  clickGain.gain.setValueAtTime(baseNoiseGain, now);
+  clickGain.gain.setValueAtTime(v, now);
   clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
 
   clickOsc.start();
   clickOsc.stop(now + 0.02);
 }
 
-function playCrystal() {
+function playCrystal(v) {
   if (!audioCtx) return;
   if (!isRunning) return;
 
@@ -199,7 +199,7 @@ function playCrystal() {
   crystalGain.connect(filter.input);
 
   const now = audioCtx.currentTime;
-  crystalGain.gain.setValueAtTime(baseNoiseGain, now);
+  crystalGain.gain.setValueAtTime(v, now);
   crystalGain.gain.exponentialRampToValueAtTime(0.0001, now + 4);
 
   carrierOsc.start();
@@ -255,7 +255,7 @@ function playGlitch() {
   ringOsc.stop(now + length);
 }
 
-function playMetal() {
+function playMetal(v) {
   if (!audioCtx) return;
   if (!isRunning) return;
 
@@ -282,7 +282,7 @@ function playMetal() {
 
   const now = audioCtx.currentTime;
   gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(1 + baseNoiseGain, now + 0.001);
+  gain.gain.linearRampToValueAtTime(1 + v, now + 0.001);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 1);
 
   noise.start(now);
@@ -291,7 +291,7 @@ function playMetal() {
   osc.stop(now + 1);
 }
 
-function playBounce() {
+function playBounce(v) {
   if (!audioCtx) return;
   if (!isRunning) return;
 
@@ -309,7 +309,7 @@ function playBounce() {
   const now = audioCtx.currentTime;
 
   gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(baseNoiseGain, now + 0.005);
+  gain.gain.linearRampToValueAtTime(v, now + 0.005);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
 
   noise.start(now);
