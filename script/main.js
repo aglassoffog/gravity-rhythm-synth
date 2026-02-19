@@ -446,11 +446,18 @@ function noteOn(key, freq, waveform) {
 
   const now = audioCtx.currentTime;
   const y = yNorm();
+  const x = xNorm();
 
-  const envAmount =
-    yAssign.value === "env"
-      ? (0.3 + y * 0.7)
-      : 1;
+  let envAmount = 1;
+  if (yAssign.value === "env" && xAssign === "env") {
+    envAmount = 0.3 + y * 0.7 + x * 0.7;
+  }
+  else if (yAssign.value === "env") {
+    envAmount = 0.3 + y * 0.7;
+  }
+  else if (xAssign.value === "env") {
+    envAmount = 0.3 + x * 0.7;
+  }
 
   env.gain.cancelScheduledValues(now);
   env.gain.setValueAtTime(0, now);
@@ -481,11 +488,18 @@ function noteOff(key) {
 
   const now = audioCtx.currentTime;
   const y = yNorm();
+  const x = xNorm();
 
-  const rel =
-    yAssign.value === "env"
-      ? envParams.release * (0.3 + y)
-      : envParams.release;
+  let rel = envParams.release;
+  if (yAssign.value === "env" && xAssign.value === "env") {
+    rel = envParams.release * (0.3 + y) * (0.3 + x);
+  }
+  else if (yAssign.value === "env") {
+    rel = envParams.release * (0.3 + y);
+  }
+  else if (xAssign.value === "env") {
+    rel = envParams.release * (0.3 + x);
+  }
 
   v.env.gain.cancelScheduledValues(now);
   v.env.gain.setValueAtTime(v.env.gain.value, now);
