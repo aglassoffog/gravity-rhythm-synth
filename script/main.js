@@ -370,7 +370,7 @@ yAssign.onchange = () => {
 
   const now = audioCtx.currentTime;
 
-  if (yAssign.value !== "pitch") {
+  if (yAssign.value !== "pitch" && xAssign.value !== "pitch") {
     voices.forEach(v => {
       v.osc.frequency.setValueAtTime(v.baseFreq, now);
     });
@@ -395,7 +395,7 @@ xAssign.onchange = () => {
 
   const now = audioCtx.currentTime;
 
-  if (xAssign.value !== "pitch") {
+  if (xAssign.value !== "pitch" && yAssign.value !== "pitch") {
     voices.forEach(v => {
       v.osc.frequency.setValueAtTime(v.baseFreq, now);
     });
