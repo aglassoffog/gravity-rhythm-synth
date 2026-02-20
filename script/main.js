@@ -124,6 +124,8 @@ function onBallCollision(){
     playMetal(gain);
   } else if (baseNoiseType === "bounce") {
     playBounce(gain);
+  } else if (baseNoiseType === "flash") {
+    playFlash(gain);
   }
 }
 

@@ -316,6 +316,58 @@ function playBounce(v) {
   noise.stop(now + 0.5);
 }
 
+function playFlash(v) {
+  if (!audioCtx) return;
+  if (!isRunning) return;
+
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = whiteNoise;
+
+  const lowGain = audioCtx.createGain();
+  const bandGain = audioCtx.createGain();
+  const highGain = audioCtx.createGain();
+  const noGain = audioCtx.createGain();
+  const output = audioCtx.createGain();
+  lowGain.gain.value = 0;
+  bandGain.gain.value = 0;
+  highGain.gain.value = 0;
+  noGain.gain.value = 0;
+
+  const lowTone = audioCtx.createBiquadFilter();
+  lowTone.type = "lowpass";
+  lowTone.frequency.value = 1000;
+  const bandTone = audioCtx.createBiquadFilter();
+  bandTone.type = "bandpass";
+  bandTone.frequency.value = 1000;
+  const highTone = audioCtx.createBiquadFilter();
+  highTone.type = "highpass";
+  highTone.frequency.value = 1000;
+  const noTone = audioCtx.createBiquadFilter();
+  noTone.type = "allpass";
+  noTone.frequency.value = 1000;
+
+  noise.connect(lowGain).connect(lowTone).connect(output);
+  noise.connect(bandGain).connect(bandTone).connect(output);
+  noise.connect(highGain).connect(highTone).connect(output);
+  noise.connect(noGain).connect(noTone).connect(output);
+  output.connect(filter.input);
+
+  const now = audioCtx.currentTime;
+  lowGain.gain.setValueAtTime(1, now);
+
+  for (let i=1;i<5;i++) {
+    const t = now + i * 0.1;
+    let val = [[v,0,0,0],[0,v,0,0],[0,0,v,0],[0,0,0,v]];
+    lowGain.gain.setValueAtTime(val[i%4][0], t);
+    bandGain.gain.setValueAtTime(val[i%4][1], t);
+    highGain.gain.setValueAtTime(val[i%4][2], t);
+    noGain.gain.setValueAtTime(val[i%4][3], t);
+  }
+
+  noise.start();
+  noise.stop(now + 1);
+}
+
 function playKarplusStrong(
   frequency = 220,
   // decay = 0.98,
