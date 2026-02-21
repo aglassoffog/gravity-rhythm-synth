@@ -17,7 +17,8 @@ function perspectiveScale(t) {
 
   return {
     sx: scaleX,
-    sy: scaleY
+    sy: scaleY,
+    p: p
   };
 }
 
@@ -29,13 +30,7 @@ function drawPerspectiveReflection() {
 
   for (let y = 0; y < h; y+=2) {
     const t = y / h;
-    const { sx, sy } = perspectiveScale(t);
-/*
-    const p = Math.pow(t, 1.3);
-
-    const scaleX = 0.8 + p * 0.2; // ← 横
-    const scaleY = 0.35 + p * 0.7; // ← 縦
-*/
+    const { sx, sy, p } = perspectiveScale(t);
 
     // world 全体をマッピング（上下反転）
     const srcY = WORLD_H * (1 - p) - 1;
@@ -82,7 +77,6 @@ function drawRipples() {
   ripples.forEach(ripple => {
     const y = ripple.y * h;
     const t = ripple.y;
-
     const { sx, sy } = perspectiveScale(t);
 
     const radius = ripple.r;
