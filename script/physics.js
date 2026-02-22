@@ -7,29 +7,9 @@ const wctx = worldCanvas.getContext("2d");
 const rctx = reflectCanvas.getContext("2d");
 const engine = Engine.create();
 engine.gravity.y = 0;
-engine.positionIterations = 8;
-engine.velocityIterations = 6;
 Runner.run(Runner.create(), engine);
 
-let stageBodies = [];
 let drawStage;
-const stages = {
-  stage1() {
-    return createStage1Bodies();
-  },
-  stage2() {
-    return createStage2Bodies();
-  },
-  stage3() {
-    return createStage3Bodies();
-  },
-  stage4() {
-    return createStage4Bodies();
-  },
-  stage5() {
-    return createStage5Bodies();
-  }
-}
 const draws = {
   stage1: drawStage1,
   stage2: drawStage2,
@@ -39,16 +19,35 @@ const draws = {
 }
 
 function loadStage(name) {
-  stageBodies.forEach(b => World.remove(engine.world, b));
-  stageBodies.length = 0;
-
-  const newBodies = stages[name]();
-  stageBodies.push(...newBodies);
-
-  World.add(engine.world, stageBodies);
   drawStage = draws[name];
-  balls.forEach(startBall);
 }
+
+World.add(engine.world, [
+  Bodies.rectangle(
+    -20, WORLD_H/2, 40, WORLD_H,
+    {
+      isStatic: true, label: "wall-left", render: {visible: false}
+    }
+  ),
+  Bodies.rectangle(
+    WORLD_W + 20, WORLD_H/2, 40, WORLD_H,
+    {
+      isStatic: true, label: "wall-right", render: {visible: false}
+    }
+  ),
+  Bodies.rectangle(
+    WORLD_W/3*2, -20, WORLD_W/3*2, 40,
+    {
+      isStatic: true, label: "wall-top", render: {visible: false}
+    }
+  ),
+  Bodies.rectangle(
+    WORLD_W/3, WORLD_H + 20, WORLD_W/3*2, 40,
+    {
+      isStatic: true, label: "wall-bottom", render: {visible: false}
+    }
+  )
+]);
 
 function setBallCount(targetCount) {
   const current = balls.length;
@@ -136,30 +135,19 @@ function xNorm() {
   return Math.min(Math.max(balls[0].position.x / WORLD_W, 0), 1);
 }
 
-function drawBody(body) {
-  const v = body.vertices;
+function drawFrame(){
   wctx.strokeStyle = "#aaa";
-  //wctx.strokeStyle = "rgba(255,255,255,0.6)";
-  wctx.lineWidth = 1;
+  wctx.lineWidth = 0.5;
 
   wctx.beginPath();
-  wctx.moveTo(v[0].x, v[0].y);
-  for (let i = 1; i < v.length; i++) {
-    wctx.lineTo(v[i].x, v[i].y);
-  }
-  wctx.closePath();
-  wctx.stroke();
-}
-
-function drawHideFrame(){
-  wctx.strokeStyle = "#000";
-  wctx.lineWidth = 1;
-  wctx.beginPath();
-  wctx.moveTo(0, 0);
+  wctx.moveTo(WORLD_W/3*1, 0);
   wctx.lineTo(WORLD_W, 0);
   wctx.lineTo(WORLD_W, WORLD_H);
+  wctx.stroke();
+
+  wctx.moveTo(0, 0);
   wctx.lineTo(0, WORLD_H);
-  wctx.closePath();
+  wctx.lineTo(WORLD_W/3*2, WORLD_H);
   wctx.stroke();
 }
 
@@ -231,10 +219,7 @@ function drawBall(ball) {
 
 function drawPhysics() {
   wctx.clearRect(0, 0, WORLD_W, WORLD_H);
-
-  stageBodies.forEach(drawBody);
-  drawHideFrame();
-
+  drawFrame();
   drawStage();
 
   if (stageSelect.value !== "stage5") {
