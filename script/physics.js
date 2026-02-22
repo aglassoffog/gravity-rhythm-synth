@@ -25,13 +25,17 @@ const stages = {
   },
   stage4() {
     return createStage4Bodies();
+  },
+  stage5() {
+    return createStage5Bodies();
   }
 }
 const draws = {
   stage1: drawStage1,
   stage2: drawStage2,
   stage3: drawStage3,
-  stage4: drawStage4
+  stage4: drawStage4,
+  stage5: drawStage5
 }
 
 function loadStage(name) {
@@ -233,12 +237,16 @@ function drawPhysics() {
 
   drawStage();
 
-  drawMoon(balls[0]);
-  balls.slice(1).forEach(drawBall);
+  if (stageSelect.value !== "stage5") {
+    drawMoon(balls[0]);
+    balls.slice(1).forEach(drawBall);
+  }
 
   drawPerspectiveReflection();
   drawFadeReflection();
-  drawRipples();
+  if (stageSelect.value !== "stage5") {
+    drawRipples();
+  }
 
   posX.textContent = balls[0].position.x.toFixed(1);
   posY.textContent = balls[0].position.y.toFixed(1);
