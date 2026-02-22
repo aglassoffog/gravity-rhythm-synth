@@ -15,7 +15,8 @@ const draws = {
   stage2: drawStage2,
   stage3: drawStage3,
   stage4: drawStage4,
-  stage5: drawStage5
+  stage5: drawStage5,
+  stage6: drawStage6
 }
 
 function loadStage(name) {
