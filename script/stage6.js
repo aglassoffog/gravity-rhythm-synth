@@ -16,7 +16,7 @@ function sieve(max) {
 }
 
 const primes = sieve(70000);
-let offset = 0;
+let S6_offset = 0;
 
 function drawStage6(){
   const cx = 300;
@@ -27,12 +27,12 @@ function drawStage6(){
   primes.forEach(v => {
 
     wctx.beginPath();
-    const x = v * Math.cos(v + offset);
-    const y = v * Math.sin(v + offset);
+    const x = v * Math.cos(v + S6_offset);
+    const y = v * Math.sin(v + S6_offset);
     wctx.arc(cx + x/200, cy + y/200, 1, 0, Math.PI * 2);
     wctx.fill();
 
   });
 
-  offset += 0.0002;
+  S6_offset += 0.0002;
 }

@@ -1,3 +1,5 @@
+const BALL_SPEED = 5;
+
 function createBall(x, y) {
   const ball = Bodies.circle(x, y, ballRadius, {
     restitution: 1,

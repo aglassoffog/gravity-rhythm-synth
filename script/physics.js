@@ -1,6 +1,5 @@
 const { Engine, Render, World, Bodies, Body, Runner } = Matter;
 const WORLD_W = worldCanvas.width, WORLD_H = worldCanvas.height;
-const BALL_SPEED = 5;
 let ballRadius = 13;
 const balls = [];
 const wctx = worldCanvas.getContext("2d");
@@ -16,7 +15,8 @@ const draws = {
   stage3: drawStage3,
   stage4: drawStage4,
   stage5: drawStage5,
-  stage6: drawStage6
+  stage6: drawStage6,
+  stage7: drawStage7
 }
 
 function loadStage(name) {
@@ -110,16 +110,16 @@ Matter.Events.on(engine, "collisionStart", event => {
     const a = pair.bodyA;
     const b = pair.bodyB;
 
-    if (
-      (a.label === "ball" && b.label === "ball")
-    ){
+    if (a.label === "ball" && b.label === "ball"){
       onBallCollision();
-    }else if (a.label === "ball" && b.label.startsWith("wall")){
+    }
+    else if (a.label === "ball" && b.label.startsWith("wall")){
       onSideWallCollision(b);
       if (b.label === "wall-bottom"){
         addRipple(a.position.x + 75,0);
       }
-    }else if (b.label === "ball" && a.label.startsWith("wall")){
+    }
+    else if (b.label === "ball" && a.label.startsWith("wall")){
       onSideWallCollision(a);
       if (a.label === "wall-bottom"){
         addRipple(b.position.x + 75,0);
